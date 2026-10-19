@@ -1,1 +1,785 @@
-index.html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Speak Up — Luyện nói tiếng Anh cùng AI</title>
+<!-- ✅ BẢN NHÁP — chị duyệt trước khi dùng. Tác giả: Lê Thị Minh Thu, Khoa KHXH&NV, Trường Quân sự Quân khu 2.
+     Chỉ dùng MÃ học viên. Ghi âm gửi về Google Drive của giáo viên (qua Google Apps Script), không gửi nơi khác.
+     Nhận dạng giọng nói dùng dịch vụ có sẵn của trình duyệt (Chrome/Safari). -->
+<style>
+:root{
+  --nen1:#0a1530; --nen2:#142a55; --kinh:rgba(255,255,255,.08); --vien:rgba(255,255,255,.14);
+  --chu:#eef3ff; --chu2:#a9b8da; --chinh:#4f8cff; --nhan:#ff9f43; --nhan2:#b36bff;
+  --dung:#2ecc71; --sai:#ff6b6b; --vang:#ffd166; --mau:#4f8cff; --hv:#ff9f43;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--chu);
+  background:radial-gradient(900px 500px at 10% -10%,rgba(79,140,255,.35),transparent 60%),
+             radial-gradient(700px 500px at 110% 30%,rgba(179,107,255,.25),transparent 60%),
+             linear-gradient(160deg,var(--nen1),var(--nen2));background-attachment:fixed;min-height:100%}
+#khung{max-width:480px;margin:0 auto;padding:14px 14px 90px;min-height:100vh;position:relative}
+.dau{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.logo{font-weight:900;font-size:22px;letter-spacing:1px;background:linear-gradient(90deg,#7fb2ff,#ffd166,#ff9f43);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.logo small{display:block;font-size:11px;letter-spacing:.3px;font-weight:600;color:var(--chu2);-webkit-text-fill-color:var(--chu2)}
+.the{background:var(--kinh);border:1px solid var(--vien);border-radius:20px;padding:16px;margin:12px 0;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);backdrop-filter:blur(8px)}
+.nut{appearance:none;border:0;border-radius:14px;min-height:48px;padding:12px 18px;font:inherit;font-weight:700;font-size:16px;
+  color:#fff;background:linear-gradient(135deg,#4f8cff,#3a63d8);box-shadow:0 6px 16px rgba(79,140,255,.35);cursor:pointer;transition:.15s}
+.nut:active{transform:translateY(2px) scale(.98)} .nut:hover{transform:translateY(-2px)}
+.nut.cam{background:linear-gradient(135deg,#ffb347,#ff7a3d);box-shadow:0 6px 16px rgba(255,122,61,.35)}
+.nut.xanh{background:linear-gradient(135deg,#34d399,#16a34a)}
+.nut.phu{background:transparent;border:1.5px solid var(--vien);box-shadow:none;color:var(--chu)}
+.nut.nho{min-height:40px;padding:8px 12px;font-size:14px}
+.hang{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hang>.nut{flex:1}
+input,select{font:inherit;font-size:18px;width:100%;padding:13px 14px;border-radius:14px;border:1.5px solid var(--vien);
+  background:rgba(255,255,255,.07);color:var(--chu);outline:none}
+input:focus{border-color:var(--chinh)}
+h1{font-size:24px;margin:6px 0} h2{font-size:19px;margin:4px 0 8px} p{line-height:1.5}
+.mo{color:var(--chu2);font-size:14px}
+.ban-nhap{position:fixed;left:0;right:0;bottom:0;text-align:center;font-size:11.5px;color:#cfe0ff;background:rgba(10,21,48,.92);
+  padding:6px 8px;border-top:1px solid var(--vien);z-index:20}
+.du-lieu-thu{background:repeating-linear-gradient(45deg,#ffd166,#ffd166 10px,#ffbf3c 10px,#ffbf3c 20px);color:#3b2a00;font-weight:800;
+  text-align:center;border-radius:10px;padding:4px;font-size:12px;margin-bottom:8px}
+.vao{animation:vao .3s ease} @keyframes vao{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.noi{animation:noi 3.2s ease-in-out infinite} @keyframes noi{50%{transform:translateY(-6px)}}
+.luoi{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chude{position:relative;border-radius:20px;padding:14px 12px 12px;min-height:150px;cursor:pointer;overflow:hidden;
+  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid var(--vien);transition:.15s}
+.chude:hover{transform:translateY(-3px)} .chude:active{transform:scale(.98)}
+.chude svg.icon{width:64px;height:64px;display:block;margin:0 auto 6px}
+.chude b{display:block;text-align:center;font-size:15px} .chude i{display:block;text-align:center;font-style:normal;font-size:12px;color:var(--chu2)}
+.chude .vach{position:absolute;inset:0 0 auto 0;height:5px}
+.cham4{display:flex;justify-content:center;gap:5px;margin-top:8px}
+.cham4 span{width:22px;height:6px;border-radius:4px;background:rgba(255,255,255,.18)} .cham4 span.x{background:var(--dung)}
+.huy{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;font-weight:700;font-size:13px;
+  background:rgba(255,255,255,.1);border:1px solid var(--vien)}
+.chip{display:inline-block;padding:6px 11px;margin:3px;border-radius:999px;font-size:14px;font-weight:600;background:rgba(255,255,255,.1);border:1px solid var(--vien);transition:.25s}
+.chip.sang{background:rgba(46,204,113,.25);border-color:var(--dung);color:#c9ffe0;transform:scale(1.06)}
+.cau-lon{font-size:26px;font-weight:800;line-height:1.35;text-align:center;margin:8px 0}
+.dich{color:var(--chu2);text-align:center;font-size:15px}
+.am-tiet{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;margin:6px 0}
+.tu-ta{display:inline-flex;align-items:flex-end;gap:3px;margin:0 8px}
+.at{display:inline-block;border-radius:999px;background:rgba(127,178,255,.25);color:#dfe9ff;font-weight:700;padding:3px 8px;font-size:13px}
+.at.nhan{background:linear-gradient(135deg,#ffb347,#ff7a3d);color:#fff;font-size:17px;padding:5px 11px;box-shadow:0 4px 10px rgba(255,122,61,.4)}
+.mic{width:116px;height:116px;border-radius:50%;border:0;margin:6px auto;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  background:radial-gradient(circle at 35% 30%,#ff9a6b,#ff4d6d);box-shadow:0 10px 30px rgba(255,77,109,.45),0 0 0 0 rgba(255,77,109,.5);transition:.2s}
+.mic.dang{animation:mach 1.1s infinite} @keyframes mach{0%{box-shadow:0 0 0 0 rgba(255,77,109,.55)}100%{box-shadow:0 0 0 26px rgba(255,77,109,0)}}
+.mic svg{width:52px;height:52px}
+.giua{text-align:center}
+canvas.song{width:100%;height:70px;display:block}
+canvas.cao-do{width:100%;height:150px;display:block;border-radius:14px;background:rgba(0,0,0,.18)}
+.tu{display:inline-block;padding:3px 7px;margin:2px;border-radius:8px;font-weight:700;font-size:19px}
+.tu.d{background:rgba(46,204,113,.22);color:#b9ffd6} .tu.s{background:rgba(255,107,107,.25);color:#ffd0d0;text-decoration:underline wavy}
+.tu.t{background:rgba(255,209,102,.15);color:#ffe7a8;opacity:.75} .tu.r{background:rgba(255,255,255,.08);color:#cfd8ef}
+.vong{width:96px;height:96px;flex:none}
+.loi{border-left:4px solid var(--sai);background:rgba(255,107,107,.1);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:15px}
+.loi.tot{border-color:var(--dung);background:rgba(46,204,113,.1)}
+.loi b{display:block;margin-bottom:2px}
+.chu-thich{display:flex;gap:14px;justify-content:center;font-size:12px;color:var(--chu2);margin-top:6px}
+.chu-thich i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:4px}
+.duong{position:relative;padding-left:34px}
+.buoc{position:relative;display:flex;align-items:center;gap:12px;padding:14px;border-radius:18px;margin:12px 0;cursor:pointer;
+  background:var(--kinh);border:1px solid var(--vien);transition:.15s}
+.buoc:hover{transform:translateX(3px)}
+.buoc .so{position:absolute;left:-34px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-weight:900;background:#2a3d6b;border:2px solid var(--vien)}
+.buoc.xong .so{background:var(--dung);border-color:#a7f3c7}
+.duong:before{content:"";position:absolute;left:13px;top:20px;bottom:20px;width:3px;background:linear-gradient(var(--dung),rgba(255,255,255,.15))}
+.buoc .bi{font-size:30px;width:44px;text-align:center}
+.buoc b{display:block} .buoc span{font-size:13px;color:var(--chu2)}
+.vet{display:flex;gap:10px;align-items:flex-start}
+.vet svg{width:84px;height:84px;flex:none}
+.bong-thoai{position:relative;background:#fff;color:#1a2550;border-radius:16px;padding:12px 14px;font-weight:700;font-size:18px;flex:1}
+.bong-thoai:before{content:"";position:absolute;left:-8px;top:22px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+.bong-thoai small{display:block;font-weight:500;color:#5b6890;font-size:13px}
+.goi-y{border:1.5px dashed rgba(255,209,102,.6);border-radius:14px;padding:10px 12px;margin:10px 0;color:#ffe7a8;font-size:17px;font-weight:600}
+.goi-y small{display:block;color:var(--chu2);font-weight:500;font-size:12px;margin-bottom:3px}
+.dong-ho{width:150px;height:150px;margin:0 auto;display:block}
+.cap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.o-cap{border-radius:18px;padding:16px 8px;text-align:center;cursor:pointer;font-size:26px;font-weight:800;border:2px solid var(--vien);
+  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.03));transition:.2s}
+.o-cap small{display:block;font-size:12px;font-weight:600;color:var(--chu2)}
+.o-cap.muc-tieu{border-color:var(--vang);box-shadow:0 0 0 4px rgba(255,209,102,.25)}
+.o-cap.dung{border-color:var(--dung);background:rgba(46,204,113,.2)} .o-cap.sai{border-color:var(--sai);background:rgba(255,107,107,.18)}
+.thanh{height:10px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden}
+.thanh i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#34d399,#4f8cff)}
+.tien-do-doi .dong{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}
+.tien-do-doi .dong b{width:44px} .tien-do-doi .thanh{flex:1}
+.lua{font-size:13px}
+#phao{position:fixed;inset:0;pointer-events:none;z-index:30}
+.lui{background:none;border:0;color:var(--chu);font-size:26px;cursor:pointer;padding:4px 8px}
+.rung{animation:rung .35s} @keyframes rung{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.an{display:none!important}
+.the-muc{display:flex;gap:10px}
+.the-muc>div{flex:1;text-align:center;padding:12px 6px;border-radius:16px;border:2px solid var(--vien);cursor:pointer;background:var(--kinh)}
+.the-muc>div.chon{border-color:var(--vang);background:rgba(255,209,102,.15)}
+.the-muc svg{width:46px;height:46px;display:block;margin:0 auto 4px}
+.nhan-xet{border-radius:16px;padding:12px;background:linear-gradient(135deg,rgba(255,209,102,.18),rgba(255,159,67,.08));border:1px solid rgba(255,209,102,.4);margin:8px 0}
+.so-to{font-size:30px;font-weight:900}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="gXanhLa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5be38a"/><stop offset="1" stop-color="#18a957"/></linearGradient>
+    <linearGradient id="gVang" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#ffb627"/></linearGradient>
+    <linearGradient id="gCam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient>
+    <linearGradient id="gLam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ab4ff"/><stop offset="1" stop-color="#3b6fe0"/></linearGradient>
+    <linearGradient id="gReu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d8b4a"/><stop offset="1" stop-color="#4b5a24"/></linearGradient>
+    <linearGradient id="gHong" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9ab0"/><stop offset="1" stop-color="#ff4d6d"/></linearGradient>
+    <linearGradient id="gTim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4a5ff"/><stop offset="1" stop-color="#8b47e6"/></linearGradient>
+    <linearGradient id="gBien" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fd4ff"/><stop offset="1" stop-color="#0077c7"/></linearGradient>
+  </defs>
+</svg>
+<div id="khung"><div id="man"></div></div>
+<canvas id="phao"></canvas>
+<div class="ban-nhap">✅ BẢN NHÁP — thầy/cô duyệt trước khi dùng · Speak Up · Lê Thị Minh Thu · điểm của máy chỉ là gợi ý</div>
+<script>
+"use strict";
+const ND = {"ghi_chu": "BẢN NHÁP — chị duyệt từng câu. Trọng âm: âm tiết VIẾT HOA là âm nhấn. ngu_dieu: xuong = giọng đi xuống cuối câu, len = đi lên. Sửa câu xong chạy lại: python tao_app.py", "chu_de": [{"id": "ban-than", "ten_vi": "Bản thân", "ten_en": "About me", "hinh": "nguoi", "mau": "#4f8cff", "nhai": [{"en": "My name is Minh.", "vi": "Tôi tên là Minh.", "ngu_dieu": "xuong", "trong_am": [], "am": "237eee9e0f"}, {"en": "I am twenty years old.", "vi": "Tôi hai mươi tuổi.", "ngu_dieu": "xuong", "trong_am": ["TWEN-ty"], "am": "d4a395803f"}, {"en": "I come from Phu Tho province.", "vi": "Tôi đến từ tỉnh Phú Thọ.", "ngu_dieu": "xuong", "trong_am": ["PRO-vince"], "am": "bafba8d0d2"}, {"en": "I am a soldier.", "vi": "Tôi là một quân nhân.", "ngu_dieu": "xuong", "trong_am": ["SOL-dier"], "am": "c82b01da43"}, {"en": "I study at a military school.", "vi": "Tôi học ở một trường quân sự.", "ngu_dieu": "xuong", "trong_am": ["STU-dy", "MI-li-ta-ry"], "am": "761fd338d0"}, {"en": "Where are you from?", "vi": "Bạn đến từ đâu?", "ngu_dieu": "xuong", "trong_am": [], "am": "fe99499473"}, {"en": "Are you a student?", "vi": "Bạn là học viên phải không?", "ngu_dieu": "len", "trong_am": ["STU-dent"], "am": "ef24d6ed91"}], "hoi_dap": [{"hoi": "What's your name?", "vi": "Bạn tên là gì?", "mau": "My name is Minh.", "khung": "My name is ___.", "tu_khoa": ["name"], "can_co": ["name"], "am_hoi": "4a0804b810", "am_mau": "237eee9e0f"}, {"hoi": "How old are you?", "vi": "Bạn bao nhiêu tuổi?", "mau": "I am twenty years old.", "khung": "I am ___ years old.", "tu_khoa": ["years old"], "can_co": ["years", "old"], "am_hoi": "13e575be86", "am_mau": "d4a395803f"}, {"hoi": "Where are you from?", "vi": "Bạn đến từ đâu?", "mau": "I come from Phu Tho province.", "khung": "I come from ___ province.", "tu_khoa": ["come from", "province"], "can_co": ["from"], "am_hoi": "fe99499473", "am_mau": "bafba8d0d2"}, {"hoi": "What do you do?", "vi": "Bạn làm nghề gì?", "mau": "I am a soldier.", "khung": "I am a ___.", "tu_khoa": ["soldier", "student"], "can_co": ["am"], "am_hoi": "ecd337ba07", "am_mau": "c82b01da43"}, {"hoi": "Where do you study?", "vi": "Bạn học ở đâu?", "mau": "I study at a military school.", "khung": "I study at ___.", "tu_khoa": ["study", "school"], "can_co": ["study"], "am_hoi": "5704e44498", "am_mau": "761fd338d0"}], "noi_cau": {"tu_noi": ["and", "but", "because", "so"], "goi_y": ["Tên + tuổi (and)", "Quê ở đâu", "Đang học/làm gì (because…)"], "mau": "My name is Minh and I am twenty years old. I come from Phu Tho province. I am a soldier and I study at a military school because I want to serve my country.", "am": "e46a8c0fa0"}, "noi_1_phut": {"de": "Talk about yourself.", "dan_y": ["name & age", "hometown", "job / unit", "hobby", "dream"], "tu_vung": ["name", "years old", "come from", "soldier", "study", "like", "want"]}}, {"id": "gia-dinh", "ten_vi": "Gia đình", "ten_en": "My family", "hinh": "nha", "mau": "#ff8a3d", "nhai": [{"en": "There are four people in my family.", "vi": "Gia đình tôi có bốn người.", "ngu_dieu": "xuong", "trong_am": ["PEO-ple", "FA-mi-ly"], "am": "8324f70f7f"}, {"en": "My father is a farmer.", "vi": "Bố tôi là nông dân.", "ngu_dieu": "xuong", "trong_am": ["FA-ther", "FAR-mer"], "am": "9438252e8b"}, {"en": "My mother is a teacher.", "vi": "Mẹ tôi là giáo viên.", "ngu_dieu": "xuong", "trong_am": ["MO-ther", "TEA-cher"], "am": "a642566cbf"}, {"en": "I have one younger sister.", "vi": "Tôi có một em gái.", "ngu_dieu": "xuong", "trong_am": ["YOUN-ger", "SIS-ter"], "am": "9f8f3daf32"}, {"en": "We love each other very much.", "vi": "Chúng tôi rất yêu thương nhau.", "ngu_dieu": "xuong", "trong_am": ["O-ther", "VE-ry"], "am": "857dbfc31a"}, {"en": "Do you have any brothers?", "vi": "Bạn có anh/em trai không?", "ngu_dieu": "len", "trong_am": ["BRO-thers"], "am": "e092ccd1f5"}], "hoi_dap": [{"hoi": "How many people are there in your family?", "vi": "Gia đình bạn có mấy người?", "mau": "There are four people in my family.", "khung": "There are ___ people in my family.", "tu_khoa": ["there are", "people"], "can_co": ["people", "family"], "am_hoi": "243e24e988", "am_mau": "8324f70f7f"}, {"hoi": "What does your father do?", "vi": "Bố bạn làm nghề gì?", "mau": "My father is a farmer.", "khung": "My father is a ___.", "tu_khoa": ["father"], "can_co": ["father"], "am_hoi": "9d99a9a7af", "am_mau": "9438252e8b"}, {"hoi": "What does your mother do?", "vi": "Mẹ bạn làm nghề gì?", "mau": "My mother is a teacher.", "khung": "My mother is a ___.", "tu_khoa": ["mother"], "can_co": ["mother"], "am_hoi": "387aa5a650", "am_mau": "a642566cbf"}, {"hoi": "Do you have any brothers or sisters?", "vi": "Bạn có anh chị em không?", "mau": "Yes, I have one younger sister.", "khung": "Yes, I have ___. / No, I don't.", "tu_khoa": ["have", "sister", "brother"], "can_co": ["have"], "am_hoi": "308c713a6f", "am_mau": "d31d5b8403"}, {"hoi": "Who do you love most in your family?", "vi": "Bạn yêu ai nhất trong gia đình?", "mau": "I love my mother most because she is very kind.", "khung": "I love my ___ most because ___.", "tu_khoa": ["love", "because"], "can_co": ["love"], "am_hoi": "89575f1cd4", "am_mau": "f3fc784d05"}], "noi_cau": {"tu_noi": ["and", "but", "because", "so"], "goi_y": ["Gia đình mấy người", "Bố, mẹ làm gì (and)", "Anh chị em", "Yêu ai nhất (because…)"], "mau": "There are four people in my family. My father is a farmer and my mother is a teacher. I have one younger sister. I love my mother most because she is very kind.", "am": "f53a3682a2"}, "noi_1_phut": {"de": "Talk about your family.", "dan_y": ["how many people", "father & mother", "brothers / sisters", "who you love most", "why"], "tu_vung": ["people", "father", "mother", "sister", "brother", "love", "because"]}}, {"id": "hang-ngay", "ten_vi": "Một ngày của tôi", "ten_en": "My daily routine", "hinh": "dong-ho", "mau": "#2bb673", "nhai": [{"en": "I get up at five thirty every morning.", "vi": "Tôi thức dậy lúc 5 giờ 30 mỗi sáng.", "ngu_dieu": "xuong", "trong_am": ["THIR-ty", "EV-ery", "MOR-ning"], "am": "42298f4089"}, {"en": "Then I do morning exercise.", "vi": "Sau đó tôi tập thể dục buổi sáng.", "ngu_dieu": "xuong", "trong_am": ["EX-er-cise"], "am": "2025425ade"}, {"en": "I have breakfast at six fifteen.", "vi": "Tôi ăn sáng lúc 6 giờ 15.", "ngu_dieu": "xuong", "trong_am": ["BREAK-fast", "fif-TEEN"], "am": "8ab1907ff9"}, {"en": "I study from seven to eleven.", "vi": "Tôi học từ 7 giờ đến 11 giờ.", "ngu_dieu": "xuong", "trong_am": ["SE-ven", "e-LE-ven"], "am": "a124a6b9b5"}, {"en": "In the afternoon, I have training.", "vi": "Buổi chiều tôi huấn luyện.", "ngu_dieu": "xuong", "trong_am": ["af-ter-NOON", "TRAI-ning"], "am": "9cd3803bda"}, {"en": "I go to bed at ten o'clock.", "vi": "Tôi đi ngủ lúc 10 giờ.", "ngu_dieu": "xuong", "trong_am": ["o'-CLOCK"], "am": "37f1c2a86a"}, {"en": "What time do you get up?", "vi": "Bạn dậy lúc mấy giờ?", "ngu_dieu": "xuong", "trong_am": [], "am": "4afc2d69f9"}], "hoi_dap": [{"hoi": "What time do you get up?", "vi": "Bạn dậy lúc mấy giờ?", "mau": "I get up at five thirty.", "khung": "I get up at ___.", "tu_khoa": ["get up"], "can_co": ["get", "up"], "am_hoi": "4afc2d69f9", "am_mau": "a435a3668f"}, {"hoi": "What do you do after you get up?", "vi": "Dậy xong bạn làm gì?", "mau": "I do morning exercise.", "khung": "I ___ .", "tu_khoa": ["exercise"], "can_co": [], "am_hoi": "306d63829c", "am_mau": "a7cdae4abc"}, {"hoi": "What time do you have breakfast?", "vi": "Bạn ăn sáng lúc mấy giờ?", "mau": "I have breakfast at six fifteen.", "khung": "I have breakfast at ___.", "tu_khoa": ["breakfast"], "can_co": ["breakfast"], "am_hoi": "6bfde3d131", "am_mau": "8ab1907ff9"}, {"hoi": "What do you do in the afternoon?", "vi": "Buổi chiều bạn làm gì?", "mau": "In the afternoon, I have training.", "khung": "In the afternoon, I ___.", "tu_khoa": ["afternoon", "training"], "can_co": ["afternoon"], "am_hoi": "325cf98c81", "am_mau": "9cd3803bda"}, {"hoi": "What time do you go to bed?", "vi": "Bạn đi ngủ lúc mấy giờ?", "mau": "I go to bed at ten o'clock.", "khung": "I go to bed at ___.", "tu_khoa": ["go to bed"], "can_co": ["bed"], "am_hoi": "da9172135e", "am_mau": "37f1c2a86a"}], "noi_cau": {"tu_noi": ["first", "then", "after that", "finally"], "goi_y": ["First: dậy, tập thể dục", "Then: ăn sáng, học", "After that: huấn luyện", "Finally: đi ngủ"], "mau": "First, I get up at five thirty and do morning exercise. Then I have breakfast and study from seven to eleven. After that, I have training in the afternoon. Finally, I go to bed at ten o'clock.", "am": "d775e22e82"}, "noi_1_phut": {"de": "Talk about your day at the school.", "dan_y": ["morning", "study time", "afternoon training", "evening", "bed time"], "tu_vung": ["get up", "exercise", "breakfast", "study", "training", "first", "then", "finally"]}}, {"id": "so-thich", "ten_vi": "Sở thích", "ten_en": "My hobbies", "hinh": "bong", "mau": "#b36bff", "nhai": [{"en": "My hobby is playing football.", "vi": "Sở thích của tôi là chơi bóng đá.", "ngu_dieu": "xuong", "trong_am": ["HOB-by", "PLAY-ing", "FOOT-ball"], "am": "3262d71c28"}, {"en": "I also like listening to music.", "vi": "Tôi cũng thích nghe nhạc.", "ngu_dieu": "xuong", "trong_am": ["AL-so", "LIS-ten-ing", "MU-sic"], "am": "bc4cff23e1"}, {"en": "I play volleyball with my friends.", "vi": "Tôi chơi bóng chuyền với bạn bè.", "ngu_dieu": "xuong", "trong_am": ["VOL-ley-ball"], "am": "e8a9eb6be2"}, {"en": "I usually play on Sunday.", "vi": "Tôi thường chơi vào Chủ nhật.", "ngu_dieu": "xuong", "trong_am": ["U-su-al-ly", "SUN-day"], "am": "c64c7a5a1e"}, {"en": "It helps me keep fit.", "vi": "Nó giúp tôi giữ sức khoẻ.", "ngu_dieu": "xuong", "trong_am": [], "am": "b1c9acb9d1"}, {"en": "Do you like reading books?", "vi": "Bạn có thích đọc sách không?", "ngu_dieu": "len", "trong_am": ["READ-ing"], "am": "55310f41f0"}], "hoi_dap": [{"hoi": "What is your hobby?", "vi": "Sở thích của bạn là gì?", "mau": "My hobby is playing football.", "khung": "My hobby is ___.", "tu_khoa": ["hobby"], "can_co": ["hobby"], "am_hoi": "20482508dc", "am_mau": "3262d71c28"}, {"hoi": "Who do you play with?", "vi": "Bạn chơi cùng ai?", "mau": "I play with my friends.", "khung": "I play with ___.", "tu_khoa": ["play with", "friends"], "can_co": ["with"], "am_hoi": "13cb5305e0", "am_mau": "6f98933652"}, {"hoi": "When do you usually play?", "vi": "Bạn thường chơi khi nào?", "mau": "I usually play on Sunday.", "khung": "I usually play on ___.", "tu_khoa": ["usually"], "can_co": [], "am_hoi": "7a29a91e70", "am_mau": "c64c7a5a1e"}, {"hoi": "Why do you like it?", "vi": "Vì sao bạn thích nó?", "mau": "I like it because it helps me keep fit.", "khung": "I like it because ___.", "tu_khoa": ["because"], "can_co": ["because"], "am_hoi": "e5551d108a", "am_mau": "7e1164a96f"}, {"hoi": "What else do you like doing?", "vi": "Bạn còn thích làm gì nữa?", "mau": "I also like listening to music.", "khung": "I also like ___.", "tu_khoa": ["also", "like"], "can_co": ["like"], "am_hoi": "5e427f876a", "am_mau": "bc4cff23e1"}], "noi_cau": {"tu_noi": ["and", "also", "because", "so"], "goi_y": ["Sở thích là gì", "Chơi với ai, khi nào", "Vì sao thích (because…)", "Còn thích gì nữa (also)"], "mau": "My hobby is playing football. I usually play with my friends on Sunday. I like it because it helps me keep fit. I also like listening to music.", "am": "61f095c691"}, "noi_1_phut": {"de": "Talk about your hobbies.", "dan_y": ["what hobby", "who with", "when", "why", "another hobby"], "tu_vung": ["hobby", "play", "friends", "usually", "because", "also", "keep fit"]}}, {"id": "cuoi-tuan", "ten_vi": "Cuối tuần", "ten_en": "My weekend", "hinh": "lich", "mau": "#00b3c7", "nhai": [{"en": "On Saturday morning, I clean my room.", "vi": "Sáng thứ Bảy tôi dọn phòng.", "ngu_dieu": "xuong", "trong_am": ["SA-tur-day", "MOR-ning"], "am": "f7af74f735"}, {"en": "In the afternoon, I wash my clothes.", "vi": "Buổi chiều tôi giặt quần áo.", "ngu_dieu": "xuong", "trong_am": ["af-ter-NOON"], "am": "518f2ede55"}, {"en": "On Sunday, I call my parents.", "vi": "Chủ nhật tôi gọi điện cho bố mẹ.", "ngu_dieu": "xuong", "trong_am": ["SUN-day", "PA-rents"], "am": "2c03c85de2"}, {"en": "Sometimes I read books in the library.", "vi": "Thỉnh thoảng tôi đọc sách ở thư viện.", "ngu_dieu": "xuong", "trong_am": ["SOME-times", "LI-bra-ry"], "am": "c98b11c782"}, {"en": "I feel happy and relaxed.", "vi": "Tôi thấy vui và thư giãn.", "ngu_dieu": "xuong", "trong_am": ["HAP-py", "re-LAXED"], "am": "a08c80a158"}, {"en": "What do you do at the weekend?", "vi": "Cuối tuần bạn làm gì?", "ngu_dieu": "xuong", "trong_am": [], "am": "4e427f5416"}], "hoi_dap": [{"hoi": "What do you do on Saturday morning?", "vi": "Sáng thứ Bảy bạn làm gì?", "mau": "On Saturday morning, I clean my room.", "khung": "On Saturday morning, I ___.", "tu_khoa": ["Saturday"], "can_co": [], "am_hoi": "e3c9ab58ab", "am_mau": "f7af74f735"}, {"hoi": "What do you do in the afternoon?", "vi": "Buổi chiều bạn làm gì?", "mau": "I wash my clothes.", "khung": "In the afternoon, I ___.", "tu_khoa": ["afternoon"], "can_co": [], "am_hoi": "325cf98c81", "am_mau": "9780c91726"}, {"hoi": "Who do you call on Sunday?", "vi": "Chủ nhật bạn gọi điện cho ai?", "mau": "I call my parents.", "khung": "I call my ___.", "tu_khoa": ["call", "parents"], "can_co": ["call"], "am_hoi": "3b3ff75cb4", "am_mau": "fbb0c04d32"}, {"hoi": "Where do you read books?", "vi": "Bạn đọc sách ở đâu?", "mau": "I read books in the library.", "khung": "I read books in ___.", "tu_khoa": ["library"], "can_co": ["read"], "am_hoi": "f6522c6e74", "am_mau": "fa69b8c20d"}, {"hoi": "How do you feel at the weekend?", "vi": "Cuối tuần bạn cảm thấy thế nào?", "mau": "I feel happy and relaxed.", "khung": "I feel ___.", "tu_khoa": ["feel"], "can_co": ["feel"], "am_hoi": "9e070aada8", "am_mau": "a08c80a158"}], "noi_cau": {"tu_noi": ["first", "then", "sometimes", "and"], "goi_y": ["Sáng thứ Bảy", "Chiều thứ Bảy (then)", "Chủ nhật", "Cảm thấy thế nào"], "mau": "On Saturday morning, I clean my room. Then I wash my clothes in the afternoon. On Sunday, I call my parents and sometimes I read books in the library. I feel happy and relaxed.", "am": "19b8245df3"}, "noi_1_phut": {"de": "Talk about your weekend.", "dan_y": ["Saturday morning", "Saturday afternoon", "Sunday", "sometimes", "feelings"], "tu_vung": ["Saturday", "Sunday", "clean", "call", "parents", "sometimes", "feel"]}}, {"id": "ky-nghi", "ten_vi": "Kỳ nghỉ đã qua", "ten_en": "My last holiday", "hinh": "bien", "mau": "#ff5c7a", "nhai": [{"en": "Last summer, I went to Sam Son beach.", "vi": "Hè năm ngoái tôi đi biển Sầm Sơn.", "ngu_dieu": "xuong", "trong_am": ["SUM-mer"], "am": "280abb20c5"}, {"en": "I went there with my family.", "vi": "Tôi đi cùng gia đình.", "ngu_dieu": "xuong", "trong_am": ["FA-mi-ly"], "am": "9f9ffe0df8"}, {"en": "We stayed there for three days.", "vi": "Chúng tôi ở đó ba ngày.", "ngu_dieu": "xuong", "trong_am": [], "am": "600634dd92"}, {"en": "We swam in the sea and ate seafood.", "vi": "Chúng tôi tắm biển và ăn hải sản.", "ngu_dieu": "xuong", "trong_am": ["SEA-food"], "am": "3f7200eef6"}, {"en": "The weather was sunny and beautiful.", "vi": "Thời tiết nắng đẹp.", "ngu_dieu": "xuong", "trong_am": ["WEA-ther", "SUN-ny", "BEAU-ti-ful"], "am": "f5757a3d1a"}, {"en": "I really enjoyed the trip.", "vi": "Tôi rất thích chuyến đi.", "ngu_dieu": "xuong", "trong_am": ["REAL-ly", "en-JOYED"], "am": "c1a5387935"}, {"en": "Did you have a good holiday?", "vi": "Kỳ nghỉ của bạn vui chứ?", "ngu_dieu": "len", "trong_am": ["HO-li-day"], "am": "01beca6611"}], "hoi_dap": [{"hoi": "Where did you go on your last holiday?", "vi": "Kỳ nghỉ trước bạn đi đâu?", "mau": "I went to Sam Son beach.", "khung": "I went to ___.", "tu_khoa": ["went"], "can_co": ["went"], "am_hoi": "c4a904edbb", "am_mau": "0887361fa5"}, {"hoi": "Who did you go with?", "vi": "Bạn đi cùng ai?", "mau": "I went there with my family.", "khung": "I went there with ___.", "tu_khoa": ["with"], "can_co": ["with"], "am_hoi": "4700649e4f", "am_mau": "9f9ffe0df8"}, {"hoi": "How long did you stay there?", "vi": "Bạn ở đó bao lâu?", "mau": "We stayed there for three days.", "khung": "We stayed there for ___ days.", "tu_khoa": ["stayed", "days"], "can_co": ["stayed"], "am_hoi": "bfc3bf1ee0", "am_mau": "600634dd92"}, {"hoi": "What did you do there?", "vi": "Bạn đã làm gì ở đó?", "mau": "We swam in the sea and ate seafood.", "khung": "We ___ and ___.", "tu_khoa": ["swam", "ate", "visited"], "can_co": [], "am_hoi": "41fb5dbec6", "am_mau": "3f7200eef6"}, {"hoi": "How was the weather?", "vi": "Thời tiết thế nào?", "mau": "The weather was sunny and beautiful.", "khung": "The weather was ___.", "tu_khoa": ["weather", "was"], "can_co": ["was"], "am_hoi": "6ec1a7144a", "am_mau": "f5757a3d1a"}], "noi_cau": {"tu_noi": ["first", "then", "after that", "finally"], "goi_y": ["Đi đâu, với ai (Last summer…)", "Ở bao lâu", "Làm gì (then, after that)", "Cảm nghĩ (finally)"], "mau": "Last summer, I went to Sam Son beach with my family. We stayed there for three days. First, we swam in the sea. Then we ate seafood. The weather was sunny and beautiful. Finally, I really enjoyed the trip.", "am": "d777cc3b75"}, "noi_1_phut": {"de": "Talk about your last holiday.", "dan_y": ["where & when", "who with", "how long", "activities", "feelings"], "tu_vung": ["went", "stayed", "swam", "ate", "was", "enjoyed", "then", "finally"]}}], "cap_am": [{"id": "n-l", "ten": "/n/ và /l/", "vung": ["bac"], "giai_thich": "Một số địa phương phía Bắc hay lẫn n và l.", "meo": "/l/: đầu lưỡi chạm lợi trên, hơi thoát hai bên lưỡi, KHÔNG ra mũi. /n/: hơi ra mũi (bịt mũi thử sẽ thấy khác).", "cap": [["night", "light"], ["no", "low"], ["need", "lead"], ["nine", "line"]], "am": [["93a04b066f", "2ac43aa43b"], ["7fa3b767c4", "53cced8d28"], ["e877c56e4f", "13edbe8b95"], ["c785e1ed29", "6438c669e0"]]}, {"id": "r-z", "ten": "/r/ (không đọc thành «z»)", "vung": ["bac"], "giai_thich": "Giọng Bắc hay đọc r giống d/z.", "meo": "/r/: cong đầu lưỡi lên, KHÔNG chạm lợi, môi hơi tròn. Thử kéo dài «rrr» như tiếng động cơ.", "cap": [["rice", "dice"], ["red", "dead"], ["read", "deed"], ["row", "doe"]], "am": [["3767b45082", "f91614c13b"], ["bda9643ac6", "f58e6a506c"], ["ecae13117d", "82c56b642e"], ["f1965a857b", "2829fc16ad"]]}, {"id": "v-j", "ten": "/v/ (không đọc thành «d/j»)", "vung": ["nam"], "giai_thich": "Giọng Nam hay đọc v giống d (j).", "meo": "/v/: răng trên chạm nhẹ môi dưới, rung cổ họng — giống /f/ nhưng có tiếng.", "cap": [["very", "berry"], ["vest", "best"], ["van", "fan"], ["vote", "boat"]], "am": [["f016441d00", "5076e33378"], ["8140abdd84", "db82206b1d"], ["957d2fa52c", "50bd8c21bf"], ["4ca5d171ac", "dd8fc45d87"]]}, {"id": "am-cuoi", "ten": "Âm cuối /t/ /k/ /p/", "vung": ["bac", "trung", "nam"], "giai_thich": "Người Việt hay nuốt hoặc đổi âm cuối (t ↔ k).", "meo": "Đóng âm cuối rõ: /t/ đầu lưỡi chạm lợi, /k/ cuống lưỡi chạm vòm mềm, /p/ mím môi — nghe được tiếng bật nhẹ.", "cap": [["cat", "cap"], ["white", "wife"], ["back", "bat"], ["right", "rice"]], "am": [["d077f244de", "3d791e43c8"], ["d508fe45ce", "bb4694a26a"], ["469bba0a56", "5f3f468112"], ["7c4f294078", "3767b45082"]]}, {"id": "s-sh", "ten": "/s/ và /ʃ/ (sh)", "vung": ["bac", "trung", "nam"], "giai_thich": "Tiếng Việt không phân biệt rõ s/x như tiếng Anh s/sh.", "meo": "/s/: răng khít, lưỡi dẹt — «xì». /ʃ/: môi chu tròn ra trước — «suỵt».", "cap": [["see", "she"], ["sip", "ship"], ["sea", "she"], ["sort", "short"]], "am": [["1e8e42b87a", "9eb0d040ef"], ["06b15d3af7", "2a3f1166b0"], ["804f743824", "9eb0d040ef"], ["cadc8c8db4", "4f09daa9d9"]]}, {"id": "duoi-s", "ten": "Đuôi -s, -es", "vung": ["bac", "trung", "nam"], "giai_thich": "Rất hay quên đọc đuôi s (books, friends, parents).", "meo": "Luôn nói rõ âm cuối /s/ hoặc /z/: book-s, friend-z. Đọc chậm từng từ rồi nối.", "cap": [["book", "books"], ["friend", "friends"], ["parent", "parents"], ["day", "days"]], "am": [["821f032888", "7d8949bcbf"], ["3af00c6cad", "28f20a02bf"], ["d0e4587804", "c68ad910ed"], ["628b7db042", "44fdec4703"]]}, {"id": "duoi-ed", "ten": "Đuôi -ed (quá khứ)", "vung": ["bac", "trung", "nam"], "giai_thich": "Hay bỏ đuôi -ed: stayed → stay.", "meo": "-ed đọc /t/ (watched), /d/ (stayed), /ɪd/ (visited). Đừng bỏ!", "cap": [["stay", "stayed"], ["watch", "watched"], ["visit", "visited"], ["play", "played"]], "am": [["99be1ee67a", "284b4c9b3c"], ["d2974c96dc", "e49e5c5c14"], ["9de70f6546", "07715e6d0e"], ["a3b34c0871", "d1b335c1c6"]]}, {"id": "th", "ten": "/θ/ /ð/ (th)", "vung": ["bac", "trung", "nam"], "giai_thich": "Tiếng Việt không có âm th của tiếng Anh, hay đọc thành t/d.", "meo": "Đặt đầu lưỡi giữa hai hàm răng, thổi hơi: /θ/ không rung (three), /ð/ có rung (they).", "cap": [["three", "tree"], ["think", "sink"], ["they", "day"], ["thank", "tank"]], "am": [["35d6d33467", "c0af77cf82"], ["54c84b40e9", "f6e041176f"], ["2bb3d86d95", "628b7db042"], ["f5ab96926a", "4107c0a4db"]]}], "vung_mien": {"bac": "Miền Bắc", "trung": "Miền Trung", "nam": "Miền Nam"}};
+const AM_NHUNG = null;
+const BAN_GOC = "<!DOCTYPE html>" + String.fromCharCode(10) + document.documentElement.outerHTML; // bản sạch để mở cửa sổ riêng
+const GG = (typeof google !== "undefined" && google) || (window.opener && (() => { try { return window.opener.google; } catch (e) { return null; } })()) || null;
+const MAY_CHU = "https://script.google.com/macros/s/AKfycbxRShwRvqRQHZURDnuQVdBPYc0rZg-Wd23mBy7uSB7Dxr8xPXmR5Lwdwe4oGl5W2HkM/exec"; // bản đặt trên web riêng: địa chỉ …/exec của Apps Script
+const CO_MAY_CHU = !!(GG && GG.script && GG.script.run) || !!MAY_CHU;
+const TRONG_KHUNG = (() => { try { return window.top !== window; } catch (e) { return true; } })();
+const KHUNG_CHAN_MIC = TRONG_KHUNG && !(document.featurePolicy && document.featurePolicy.allowsFeature("microphone"));
+const DEMO = !CO_MAY_CHU;
+const MUC = ["Bắt đầu", "Cơ bản", "Khá"];
+const TEN_LOI = {
+  "duoi-s": "Quên đuôi -s", "duoi-ed": "Quên đuôi -ed", "th": "Âm th (/θ/ /ð/)", "n-l": "Lẫn n / l", "r-z": "Âm r đọc thành d/z",
+  "v-j": "Âm v đọc thành b/d", "s-sh": "Lẫn s / sh", "am-cuoi": "Nuốt / đổi âm cuối", "bo-tu": "Bỏ sót từ", "khac": "Từ chưa rõ", "ngu-dieu": "Ngữ điệu cuối câu"
+};
+const MEO_LOI = {
+  "duoi-s": "Nói rõ âm /s/ hoặc /z/ ở cuối: book-s, friend-z.",
+  "duoi-ed": "Đuôi -ed đọc /t/, /d/ hoặc /ɪd/ — đừng bỏ: stay-d, watch-t.",
+  "th": "Đặt đầu lưỡi giữa hai hàm răng rồi thổi hơi: three, they.",
+  "n-l": "/l/: đầu lưỡi chạm lợi trên, hơi ra hai bên lưỡi, không ra mũi.",
+  "r-z": "/r/: cong lưỡi lên, không chạm lợi, môi hơi tròn.",
+  "v-j": "/v/: răng trên chạm nhẹ môi dưới, rung cổ họng.",
+  "s-sh": "/ʃ/ (sh): chu môi tròn ra trước như «suỵt».",
+  "am-cuoi": "Đóng âm cuối rõ ràng — /t/ lưỡi chạm lợi, /k/ cuống lưỡi, /p/ mím môi.",
+  "bo-tu": "Nói chậm hơn, rõ từng từ, đừng nuốt từ ngắn (a, the, at).",
+  "khac": "Bấm 🐢 nghe chậm từ này, nhại lại 3 lần.",
+  "ngu-dieu": "Câu kể, câu hỏi Wh-: giọng đi xuống cuối câu ↘. Câu hỏi Yes/No: giọng đi lên ↗."
+};
+let S = { hv: null, pin: "", tienDo: { luot: [], tieuDoiTuan: {}, loiNhan: [] }, am: {}, chup: false };
+
+/* ===================== MÁY CHỦ / DỮ LIỆU THỬ ===================== */
+function goi(ten, ...doi) {
+  if (MAY_CHU) return fetch(MAY_CHU, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ ham: ten, doi }) })
+    .then(r => r.json()); // gửi về Google Apps Script của giáo viên
+  if (!DEMO) return new Promise((ok, hong) => GG.script.run.withSuccessHandler(ok).withFailureHandler(e => hong(e))[ten](...doi));
+  return Promise.resolve(DEMO_API[ten](...doi));
+}
+function khoDemo() { try { return JSON.parse(localStorage.getItem("speakup_thu") || "null") || taoDemo(); } catch (e) { return taoDemo(); } }
+function luuDemo(k) { try { localStorage.setItem("speakup_thu", JSON.stringify(k)); } catch (e) {} }
+function taoDemo() {
+  const luot = [], hom = new Date();
+  const cd = ["ban-than", "gia-dinh", "hang-ngay"];
+  for (let d = 5; d >= 1; d--) for (let k = 0; k < 3; k++) {
+    const t = new Date(hom); t.setDate(t.getDate() - d);
+    luot.push({ t: t.toISOString().slice(0, 10), cd: cd[(d + k) % 3], bac: ["nhai", "hoi-dap", "noi-cau"][k], i: k, diem: 55 + 6 * (5 - d) + k * 3 });
+  }
+  return { hv: { ma: "HV07", tieuDoi: "TĐ1", muc: "Cơ bản", vung: "bac" }, tienDo: { luot,
+    tieuDoiTuan: { "TĐ1": 64, "TĐ2": 51, "TĐ3": 47, "TĐ4": 58, "TĐ5": 39, "TĐ6": 44, "TĐ7": 55, "TĐ8": 30 },
+    loiNhan: [{ t: "2026-10-21", noiDung: "About me", tong: 4.5, nhanXet: "Em nói rõ, tự tin hơn tuần trước. Chú ý đuôi -s (books, parents) và âm th (three). Cố gắng nối câu bằng because nhé!" }] } };
+}
+const DEMO_API = {
+  dangNhap(ma, pin) { const k = khoDemo(); if (!/^HV\d\d$/i.test(ma)) return { ok: false, loi: "Sai mã học viên hoặc PIN." }; k.hv.ma = ma.toUpperCase(); luuDemo(k); return { ok: true, hv: k.hv, tienDo: k.tienDo }; },
+  capNhatHoSo(ma, pin, muc, vung) { const k = khoDemo(); if (muc) k.hv.muc = muc; if (vung) k.hv.vung = vung; luuDemo(k); return { ok: true }; },
+  luuLuot(ma, pin, l) { const k = khoDemo(); k.tienDo.luot.push({ t: new Date().toISOString().slice(0, 10), cd: l.cd, bac: l.bac, i: l.i, diem: l.diem }); luuDemo(k); return { ok: true, tienDo: k.tienDo }; },
+  layAm(ds) { const am = {}; ds.forEach(m => { if (AM_NHUNG && AM_NHUNG[m]) am[m] = AM_NHUNG[m]; }); return { am }; }
+};
+
+/* ===================== HÌNH VẼ SVG ===================== */
+function vet(cam) { // linh vật: vẹt Polly đội mũ lính
+  return `<svg viewBox="0 0 120 120" class="noi" aria-label="Vẹt Polly">
+  <ellipse cx="60" cy="112" rx="30" ry="5" fill="rgba(0,0,0,.25)"/>
+  <path d="M40 98 L34 116 M48 100 L46 116" stroke="#ffb627" stroke-width="5" stroke-linecap="round"/>
+  <path d="M74 80 Q98 96 92 118 Q80 104 68 94Z" fill="#2f9e5b"/>
+  <ellipse cx="58" cy="74" rx="30" ry="32" fill="url(#gXanhLa)"/>
+  <ellipse cx="54" cy="84" rx="16" ry="18" fill="url(#gVang)"/>
+  <path d="M78 62 Q96 78 84 98 Q74 88 72 70Z" fill="#1f8a4a"/>
+  <circle cx="58" cy="40" r="24" fill="url(#gXanhLa)"/>
+  <circle cx="66" cy="38" r="8" fill="#fff"/><circle cx="68" cy="38" r="4.2" fill="#14213d"/><circle cx="69.5" cy="36.5" r="1.4" fill="#fff"/>
+  <path d="M78 42 Q96 44 88 60 Q82 52 74 50Z" fill="url(#gCam)"/>
+  <circle cx="50" cy="48" r="5" fill="#ff8fa3" opacity=".6"/>
+  <path d="M33 30 Q58 6 83 28 L84 33 Q58 22 32 35Z" fill="url(#gReu)"/>
+  <rect x="31" y="31" width="54" height="6" rx="3" fill="#3d4a1c"/>
+  <polygon points="58,15 60.5,21 67,21 61.8,25 63.8,31 58,27 52.2,31 54.2,25 49,21 55.5,21" fill="#ffd166"/>
+  ${cam ? `<path d="M96 30 l8 -6 M98 40 h10 M96 50 l8 6" stroke="#ffd166" stroke-width="3" stroke-linecap="round"/>` : ""}
+  </svg>`;
+}
+const ICON = {
+  nguoi: `<svg class="icon" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gLam)" opacity=".35"/><circle cx="32" cy="25" r="11" fill="#ffd9b8"/><path d="M20 20 Q32 8 44 20 L44 23 Q32 17 20 23Z" fill="url(#gReu)"/><polygon points="32,12 33.4,15.4 37,15.4 34.1,17.6 35.2,21 32,19 28.8,21 29.9,17.6 27,15.4 30.6,15.4" fill="#ffd166"/><path d="M14 56 Q16 38 32 38 Q48 38 50 56Z" fill="url(#gReu)"/><circle cx="28" cy="26" r="1.6" fill="#333"/><circle cx="36" cy="26" r="1.6" fill="#333"/><path d="M28 31 Q32 34 36 31" stroke="#a05a3c" stroke-width="1.6" fill="none"/></svg>`,
+  nha: `<svg class="icon" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gCam)" opacity=".3"/><path d="M10 32 L32 12 L54 32Z" fill="url(#gHong)"/><rect x="16" y="30" width="32" height="24" rx="2" fill="#fff3e0"/><rect x="28" y="40" width="9" height="14" rx="1" fill="url(#gCam)"/><rect x="19" y="36" width="7" height="7" fill="#8ab4ff"/><rect x="39" y="36" width="7" height="7" fill="#8ab4ff"/><path d="M32 22 c-3-4-8 0-4 4 l4 4 l4-4 c4-4-1-8-4-4z" fill="#ff4d6d"/></svg>`,
+  "dong-ho": `<svg class="icon" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gXanhLa)" opacity=".3"/><circle cx="32" cy="34" r="20" fill="#fff" stroke="url(#gXanhLa)" stroke-width="5"/><path d="M32 34 V22 M32 34 L41 39" stroke="#14213d" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="34" r="2.5" fill="#ff4d6d"/><circle cx="16" cy="14" r="6" fill="url(#gVang)"/><circle cx="48" cy="14" r="6" fill="url(#gVang)"/></svg>`,
+  bong: `<svg class="icon" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gTim)" opacity=".3"/><circle cx="28" cy="34" r="17" fill="#fff"/><polygon points="28,26 35,31 32,39 24,39 21,31" fill="#14213d"/><path d="M28 17 V26 M45 31 L35 31 M40 49 L32 39 M16 49 L24 39 M11 31 L21 31" stroke="#14213d" stroke-width="2"/><path d="M46 12 v14 a4 4 0 1 1 -3 -4 v-8 l8 -2 v12 a4 4 0 1 1 -3 -4 v-6" fill="url(#gTim)"/></svg>`,
+  lich: `<svg class="icon" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gBien)" opacity=".3"/><rect x="12" y="16" width="40" height="36" rx="6" fill="#fff"/><rect x="12" y="16" width="40" height="11" rx="6" fill="url(#gBien)"/><rect x="20" y="10" width="4" height="10" rx="2" fill="#14213d"/><rect x="40" y="10" width="4" height="10" rx="2" fill="#14213d"/><text x="32" y="47" text-anchor="middle" font-size="16" font-weight="900" fill="#0077c7" font-family="Segoe UI,Arial">SUN</text></svg>`,
+  bien: `<svg class="icon" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gHong)" opacity=".3"/><circle cx="42" cy="22" r="9" fill="url(#gVang)"/><path d="M6 40 Q14 34 22 40 T38 40 T54 40 T62 40 V58 H6Z" fill="url(#gBien)"/><path d="M6 48 Q14 43 22 48 T38 48 T54 48 T62 48" stroke="#bfefff" stroke-width="2" fill="none"/><path d="M18 40 V22 M18 22 Q26 20 30 26 M18 22 Q10 18 8 24 M18 22 Q22 14 28 16" stroke="#2f7d32" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
+  am: `<svg class="icon" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="url(#gVang)" opacity=".3"/><path d="M14 26 h8 l10 -8 v28 l-10 -8 h-8z" fill="url(#gCam)"/><path d="M38 24 q6 8 0 16 M44 18 q12 14 0 28" stroke="#ffd166" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>`
+};
+const MIC = `<svg viewBox="0 0 24 24" fill="#fff"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0" stroke="#fff" stroke-width="2" fill="none"/><path d="M12 18v4M8 22h8" stroke="#fff" stroke-width="2"/></svg>`;
+const DUNG_SVG = `<svg viewBox="0 0 24 24" fill="#fff"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>`;
+function vongDiem(d) {
+  const m = d >= 80 ? "#2ecc71" : d >= 50 ? "#ffd166" : "#ff6b6b", c = 2 * Math.PI * 40;
+  return `<svg class="vong" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,.12)" stroke-width="10" fill="none"/>
+  <circle cx="50" cy="50" r="40" stroke="${m}" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="${c * d / 100} ${c}" transform="rotate(-90 50 50)"/>
+  <text x="50" y="57" text-anchor="middle" font-size="24" font-weight="900" fill="#fff" font-family="Segoe UI,Arial">${Math.round(d)}</text></svg>`;
+}
+function sao(d) { return d >= 80 ? "⭐⭐⭐" : d >= 50 ? "⭐⭐" : "⭐"; }
+
+/* ===================== ÂM THANH ===================== */
+let AC = null;
+function ac() { if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); return AC; }
+function ting(dung) {
+  try { const a = ac(), o = a.createOscillator(), g = a.createGain(); o.type = dung ? "triangle" : "sawtooth";
+    o.frequency.setValueAtTime(dung ? 880 : 220, a.currentTime); if (dung) o.frequency.setValueAtTime(1320, a.currentTime + .09);
+    g.gain.setValueAtTime(.0001, a.currentTime); g.gain.exponentialRampToValueAtTime(dung ? .25 : .12, a.currentTime + .02); g.gain.exponentialRampToValueAtTime(.0001, a.currentTime + .35);
+    o.connect(g).connect(a.destination); o.start(); o.stop(a.currentTime + .4); } catch (e) {}
+}
+async function layAm(dsMa) {
+  const thieu = dsMa.filter(m => m && !S.am[m]);
+  if (AM_NHUNG) thieu.forEach(m => { if (AM_NHUNG[m]) S.am[m] = AM_NHUNG[m]; });
+  const con = thieu.filter(m => !S.am[m]);
+  if (con.length && !DEMO) { try { const r = await goi("layAm", con); Object.assign(S.am, r.am || {}); } catch (e) {} }
+}
+let dangPhat = null;
+async function phat(ma, toc) {
+  await layAm([ma]);
+  const b = S.am[ma]; if (!b) { baoNhanh("Chưa tải được giọng mẫu — kiểm tra mạng."); return; }
+  if (dangPhat) dangPhat.pause();
+  const a = new Audio("data:audio/mpeg;base64," + b); a.playbackRate = toc || 1; try { a.preservesPitch = true; } catch (e) {}
+  dangPhat = a; a.play().catch(() => {});
+}
+function b64SangBuffer(b64) { const s = atob(b64), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u.buffer; }
+
+/* ===================== CAO ĐỘ (NGỮ ĐIỆU) — phân tích ngay trên máy ===================== */
+function f0(buf, sr) { // tự tương quan, lấy mẫu thưa ½ để nhẹ máy
+  const n = buf.length >> 1, x = new Float32Array(n); let e = 0;
+  for (let i = 0; i < n; i++) { x[i] = buf[i * 2]; e += x[i] * x[i]; }
+  const rms = Math.sqrt(e / n); if (rms < 0.012) return 0;
+  const sr2 = sr / 2, minL = Math.floor(sr2 / 400), maxL = Math.min(n - 2, Math.floor(sr2 / 70));
+  let tot = 0, lag = 0;
+  for (let l = minL; l <= maxL; l++) { let s = 0; for (let i = 0; i < n - l; i++) s += x[i] * x[i + l]; s /= (n - l); if (s > tot) { tot = s; lag = l; } }
+  return (lag && tot / (rms * rms) > 0.35) ? sr2 / lag : 0;
+}
+function sangBanCung(hz) { // đổi Hz → nửa cung so với trung vị của chính giọng đó
+  const co = hz.filter(v => v > 0).sort((a, b) => a - b); if (!co.length) return hz.map(() => null);
+  const tv = co[co.length >> 1];
+  const st = hz.map(v => v > 0 ? 12 * Math.log2(v / tv) : null);
+  return st.map((v, i) => { if (v === null) return null; const w = [st[i - 1], v, st[i + 1]].filter(z => z !== null && z !== undefined).sort((a, b) => a - b); return w[w.length >> 1]; });
+}
+async function caoDoMau(ma) {
+  if (S["cd_" + ma]) return S["cd_" + ma];
+  await layAm([ma]); const b = S.am[ma]; if (!b) return [];
+  try {
+    const buf = await Promise.race([ac().decodeAudioData(b64SangBuffer(b)), new Promise((_, h) => setTimeout(() => h(new Error("chậm")), 2500))]);
+    const d = buf.getChannelData(0), sr = buf.sampleRate, hz = [];
+    const khung = 2048, buoc = Math.round(sr * 0.03);
+    for (let i = 0; i + khung < d.length; i += buoc) hz.push(f0(d.subarray(i, i + khung), sr));
+    return (S["cd_" + ma] = catLang(sangBanCung(hz)));
+  } catch (e) { return []; }
+}
+function catLang(st) { let a = 0, b = st.length - 1; while (a < b && st[a] === null) a++; while (b > a && st[b] === null) b--; return st.slice(a, b + 1); }
+function huongCuoi(st) { // ↗ lên / ↘ xuống ở 30% cuối
+  const co = st.map((v, i) => [i, v]).filter(p => p[1] !== null); if (co.length < 6) return 0;
+  const n = co.length, cuoi = co.slice(Math.floor(n * .8)), truoc = co.slice(Math.floor(n * .5), Math.floor(n * .8));
+  const tb = a => a.reduce((s, p) => s + p[1], 0) / Math.max(1, a.length);
+  const d = tb(cuoi) - tb(truoc); return d > 1.2 ? 1 : d < -1.2 ? -1 : 0;
+}
+function veCaoDo(cv, mau, hv) {
+  const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  cv.width = Math.max(300, r.width * dpr); cv.height = 150 * dpr; const g = cv.getContext("2d"); g.scale(dpr, dpr);
+  const W = cv.width / dpr, H = 150;
+  g.strokeStyle = "rgba(255,255,255,.08)"; g.lineWidth = 1;
+  for (let y = 0; y <= 4; y++) { g.beginPath(); g.moveTo(0, 15 + y * 30); g.lineTo(W, 15 + y * 30); g.stroke(); }
+  g.fillStyle = "#a9b8da"; g.font = "11px Segoe UI,Arial"; g.fillText("cao", 4, 12); g.fillText("thấp", 4, H - 4);
+  const ve = (st, mau, day) => {
+    if (!st || !st.length) return; g.strokeStyle = mau; g.lineWidth = day; g.lineJoin = g.lineCap = "round"; g.beginPath(); let mo = false;
+    st.forEach((v, i) => { const x = 10 + (W - 20) * i / Math.max(1, st.length - 1); if (v === null) { mo = false; return; }
+      const y = H / 2 - Math.max(-8, Math.min(8, v)) * (H / 2 - 12) / 8; if (!mo) { g.moveTo(x, y); mo = true; } else g.lineTo(x, y); });
+    g.stroke();
+  };
+  ve(mau, "rgba(127,178,255,.95)", 5); ve(hv, "#ff9f43", 3.5);
+}
+
+/* ===================== GHI ÂM + NHẬN DẠNG GIỌNG NÓI ===================== */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+async function batDauNoi(opt) {
+  const kq = { chu: "", phuongAn: [], hz: [], blob: null, mime: "", giay: 0, coSR: !!SR, loiSR: "" };
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }); }
+  catch (e) { throw new Error("Chưa cho phép micro. Bấm vào biểu tượng ổ khoá trên thanh địa chỉ → cho phép Micro, rồi thử lại."); }
+  const a = ac(), nguon = a.createMediaStreamSource(stream), pt = a.createAnalyser(); pt.fftSize = 2048; nguon.connect(pt);
+  const buf = new Float32Array(2048), bd = performance.now();
+  const hen = setInterval(() => { pt.getFloatTimeDomainData(buf); let e = 0; for (let i = 0; i < buf.length; i += 4) e += buf[i] * buf[i];
+    opt.onMuc && opt.onMuc(Math.min(1, Math.sqrt(e / 512) * 6)); kq.hz.push(f0(buf, a.sampleRate)); }, 40);
+  let mr = null, khoi = [];
+  if (window.MediaRecorder) {
+    const kieu = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/aac"].find(k => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(k)) || "";
+    try { mr = new MediaRecorder(stream, kieu ? { mimeType: kieu, audioBitsPerSecond: 32000 } : {}); kq.mime = mr.mimeType || kieu; mr.ondataavailable = e => e.data.size && khoi.push(e.data); mr.start(); } catch (e) { mr = null; }
+  }
+  let rec = null, dangChay = true, finals = [], tam = "";
+  const henKetThucSR = new Promise(xong => {
+    if (!SR) return xong();
+    rec = new SR(); rec.lang = "en-US"; rec.interimResults = true; rec.continuous = !!opt.lienTuc; rec.maxAlternatives = 3;
+    rec.onresult = e => { tam = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i];
+        if (r.isFinal) { finals.push(r[0].transcript); kq.phuongAn.push(Array.from(r).map(x => x.transcript)); } else tam += r[0].transcript; }
+      opt.onChu && opt.onChu((finals.join(" ") + " " + tam).trim()); };
+    rec.onerror = e => { kq.loiSR = e.error; };
+    rec.onend = () => { if (dangChay && opt.lienTuc && !kq.loiSR) { try { rec.start(); return; } catch (e) {} } xong(); };
+    try { rec.start(); } catch (e) { kq.loiSR = "start"; xong(); }
+  });
+  const dung = async () => {
+    dangChay = false; clearInterval(hen);
+    if (rec) try { rec.stop(); } catch (e) {}
+    const henMr = new Promise(x => { if (!mr || mr.state === "inactive") return x(); mr.onstop = x; mr.stop(); });
+    await Promise.race([Promise.all([henKetThucSR, henMr]), new Promise(x => setTimeout(x, 3000))]);
+    stream.getTracks().forEach(t => t.stop());
+    kq.giay = Math.round((performance.now() - bd) / 100) / 10;
+    if (tam && !finals.length) finals.push(tam);
+    kq.chu = finals.join(" ").trim();
+    if (khoi.length) kq.blob = new Blob(khoi, { type: kq.mime || "audio/webm" });
+    kq.caoDo = catLang(sangBanCung(kq.hz));
+    return kq;
+  };
+  return { dung };
+}
+function blobSangB64(b) { return new Promise(x => { if (!b) return x(""); const r = new FileReader(); r.onload = () => x(String(r.result).split(",")[1] || ""); r.readAsDataURL(b); }); }
+
+/* ===================== SO SÁNH CÂU, GỌI TÊN LỖI ===================== */
+const SO = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const CHUC = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+function soChu(n) { n = +n; if (n < 20) return SO[n]; if (n < 100) return CHUC[Math.floor(n / 10)] + (n % 10 ? " " + SO[n % 10] : ""); return String(n); }
+function chuanHoa(t) {
+  t = " " + String(t || "").toLowerCase().replace(/[’`]/g, "'") + " ";
+  t = t.replace(/(\d{1,2}):00/g, (m, h) => soChu(h) + " o'clock").replace(/(\d{1,2}):(\d{2})/g, (m, h, p) => soChu(h) + " " + soChu(p));
+  t = t.replace(/\d+/g, m => soChu(m));
+  const rut = { "i'm": "i am", "what's": "what is", "it's": "it is", "don't": "do not", "didn't": "did not", "i've": "i have", "let's": "let us", "he's": "he is", "she's": "she is", "that's": "that is", "o'clock": "oclock", "there's": "there is", "you're": "you are", "we're": "we are" };
+  for (const k in rut) t = t.split(" " + k + " ").join(" " + rut[k] + " ");
+  return t.replace(/o'clock/g, "oclock").replace(/[^a-z' ]/g, " ").replace(/'/g, "").split(/\s+/).filter(Boolean);
+}
+function tenRieng(cau) { // từ viết hoa giữa câu (tên người, địa danh) — không chấm
+  const r = new Set(); String(cau).split(/\s+/).forEach((w, i) => { const s = w.replace(/[^A-Za-z']/g, ""); if (i > 0 && /^[A-Z]/.test(s) && s !== "I") r.add(s.toLowerCase()); }); return r;
+}
+function canChinh(a, b) { // Levenshtein theo từ → danh sách cặp
+  const n = a.length, m = b.length, d = Array.from({ length: n + 1 }, (_, i) => Array(m + 1).fill(0));
+  for (let i = 0; i <= n; i++) d[i][0] = i; for (let j = 0; j <= m; j++) d[0][j] = j;
+  for (let i = 1; i <= n; i++) for (let j = 1; j <= m; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  const ra = []; let i = n, j = m;
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && d[i][j] === d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)) { ra.unshift([a[i - 1], b[j - 1]]); i--; j--; }
+    else if (i > 0 && d[i][j] === d[i - 1][j] + 1) { ra.unshift([a[i - 1], null]); i--; }
+    else { ra.unshift([null, b[j - 1]]); j--; }
+  }
+  return ra;
+}
+function loiCua(mau, nghe) {
+  if (!nghe) return "bo-tu";
+  const a = mau, b = nghe;
+  if (a.endsWith("s") && b === a.slice(0, -1) || a.endsWith("es") && b === a.slice(0, -2)) return "duoi-s";
+  if (a.endsWith("ed") && (b === a.slice(0, -2) || b === a.slice(0, -1))) return "duoi-ed";
+  if (a.startsWith("th") && /^(t|d|s|f)/.test(b) && !b.startsWith("th")) return "th";
+  if (a[0] === "l" && b[0] === "n" && a.slice(1, 3) === b.slice(1, 3) || a[0] === "n" && b[0] === "l" && a.slice(1, 3) === b.slice(1, 3)) return "n-l";
+  if (a[0] === "r" && /^(d|z|l|g)/.test(b) && a.slice(-2) === b.slice(-2)) return "r-z";
+  if (a[0] === "v" && /^(b|w|f|y)/.test(b)) return "v-j";
+  if (a.startsWith("sh") && b[0] === "s" && !b.startsWith("sh") || a[0] === "s" && !a.startsWith("sh") && b.startsWith("sh")) return "s-sh";
+  if (a.length > 2 && b.length >= a.length - 1 && a.slice(0, -1) === b.slice(0, a.length - 1) && a !== b) return "am-cuoi";
+  if (a.length > 2 && a.slice(0, -1) === b) return "am-cuoi";
+  return "khac";
+}
+function chamCau(cauMau, ketQua) {
+  const mau = chuanHoa(cauMau), rieng = tenRieng(cauMau);
+  const cacPhuongAn = [ketQua.chu].concat((ketQua.phuongAn || []).length === 1 ? ketQua.phuongAn[0].slice(1) : []).filter(Boolean);
+  let tot = null;
+  for (const pa of cacPhuongAn.length ? cacPhuongAn : [""]) {
+    const cc = canChinh(mau, chuanHoa(pa)); let dung = 0, tong = 0;
+    cc.forEach(([x, y]) => { if (x && !rieng.has(x)) { tong++; if (x === y) dung++; } });
+    const diem = tong ? 100 * dung / tong : 0;
+    if (!tot || diem > tot.diem) tot = { diem, cc, pa };
+  }
+  const loi = []; const tu = tot.cc.filter(p => p[0]).map(([x, y]) => {
+    if (rieng.has(x)) return { w: x, k: "r" };
+    if (x === y) return { w: x, k: "d" };
+    const l = loiCua(x, y); loi.push({ ma: l, w: x, nghe: y }); return { w: x, k: y ? "s" : "t", nghe: y, l };
+  });
+  return { diem: Math.round(tot.diem), tu, loi, nghe: tot.pa };
+}
+function hienTu(tu) {
+  return tu.map(t => `<span class="tu ${t.k}" title="${t.nghe ? "máy nghe: " + t.nghe : ""}">${t.w}</span>`).join(" ");
+}
+function hienLoi(loi, nguDieuLoi) {
+  const gom = {}; loi.forEach(l => { (gom[l.ma] = gom[l.ma] || []).push(l); });
+  let h = Object.keys(gom).slice(0, 3).map(ma => `<div class="loi"><b>${TEN_LOI[ma]}</b>${gom[ma].map(l => `«${l.w}»${l.nghe ? ` → máy nghe «${l.nghe}»` : " — chưa nghe thấy"}`).join(", ")}<br><span class="mo">💡 ${MEO_LOI[ma]}</span></div>`).join("");
+  if (nguDieuLoi) h += `<div class="loi"><b>${TEN_LOI["ngu-dieu"]}</b>${nguDieuLoi}<br><span class="mo">💡 ${MEO_LOI["ngu-dieu"]}</span></div>`;
+  return h || `<div class="loi tot"><b>Rất tốt! 🎉</b>Máy nghe rõ tất cả các từ. Tiếp tục giữ nhịp và ngữ điệu nhé.</div>`;
+}
+
+/* ===================== KHUNG MÀN HÌNH ===================== */
+const $ = s => document.querySelector(s);
+function ve(html) { const m = $("#man"); m.innerHTML = (DEMO ? `<div class="du-lieu-thu">BẢN CHẠY THỬ — DỮ LIỆU THỬ, chưa nối máy chủ</div>` : "") + html; m.classList.remove("vao"); void m.offsetWidth; if (!S.chup) m.classList.add("vao"); window.scrollTo(0, 0); }
+function dau(tieuDe, quayLai) {
+  return `<div class="dau">${quayLai ? `<button class="lui" data-di="${quayLai}" aria-label="Quay lại">‹</button>` : ""}<div class="logo">SPEAK UP<small>${tieuDe}</small></div>
+  <div style="margin-left:auto" class="huy">🎖️ ${S.hv ? S.hv.ma : ""}</div></div>`;
+}
+function baoNhanh(t) { const d = document.createElement("div"); d.textContent = t; d.style.cssText = "position:fixed;left:50%;bottom:44px;transform:translateX(-50%);background:#14213d;border:1px solid #4f8cff;padding:10px 14px;border-radius:12px;z-index:40;max-width:90%"; document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
+function cd(id) { return ND.chu_de.find(c => c.id === id); }
+function soNgayLienTuc() {
+  const ngay = new Set(S.tienDo.luot.map(l => String(l.t).slice(0, 10))); let n = 0; const d = new Date();
+  if (!ngay.has(d.toISOString().slice(0, 10))) d.setDate(d.getDate() - 1);
+  while (ngay.has(d.toISOString().slice(0, 10))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function daXong(cdId, bac) { return S.tienDo.luot.some(l => l.cd === cdId && l.bac === bac && (+l.diem || 0) >= 50); }
+
+/* ----- Google chạy trang trong khung không cho dùng micro → mở app ra cửa sổ riêng ----- */
+function manMoCuaSo(loi) {
+  ve(`<div class="giua" style="margin-top:24px">${vet(true).replace("<svg", '<svg style="width:150px;height:150px"')}
+  <div class="logo" style="font-size:40px">SPEAK UP<small style="font-size:14px">Luyện nói tiếng Anh cùng AI</small></div></div>
+  <div class="the giua"><p style="margin-top:0">Để dùng được <b>micro</b>, phòng luyện nói mở ở một <b>cửa sổ riêng</b>.</p>
+  <button class="nut cam" style="width:100%;font-size:19px;min-height:60px" data-act="mo-cua-so">🎙️ Mở phòng luyện nói</button>
+  ${loi ? `<div class="loi rung" style="text-align:left">${loi}</div>` : ""}
+  <p class="mo">Giữ trang này mở phía sau trong lúc luyện.</p></div>`);
+}
+function moCuaSo() {
+  const w = window.open("", "_blank");
+  if (!w) return manMoCuaSo("Trình duyệt đang chặn cửa sổ mới. Bấm vào thông báo «Đã chặn cửa sổ bật lên» trên thanh địa chỉ → <b>Luôn cho phép</b>, rồi bấm lại nút.");
+  try { w.google = GG; } catch (e) {}
+  w.document.open(); w.document.write(BAN_GOC); w.document.close();
+}
+
+/* ----- Đăng nhập ----- */
+function manDangNhap(loi) {
+  ve(`<div class="giua" style="margin-top:18px">${vet(true).replace("<svg", '<svg style="width:150px;height:150px"')}
+  <div class="logo" style="font-size:40px">SPEAK UP<small style="font-size:14px">Luyện nói tiếng Anh cùng AI</small></div></div>
+  <div class="the"><p class="mo" style="margin-top:0">Nhập <b>mã học viên</b> và <b>mã PIN</b> cô phát cho em (không nhập họ tên).</p>
+  <input id="ma" placeholder="Mã học viên, VD HV07" autocomplete="off" style="text-transform:uppercase;margin-bottom:10px" value="${DEMO ? "HV07" : ""}">
+  <input id="pin" placeholder="Mã PIN 4 số" inputmode="numeric" maxlength="4" style="margin-bottom:12px" value="${DEMO ? "1234" : ""}">
+  ${loi ? `<div class="loi rung">${loi}</div>` : ""}
+  <button class="nut cam" style="width:100%" data-act="dang-nhap">🎙️ Vào luyện nói</button></div>
+  <p class="mo giua">Cần: điện thoại có micro · mạng Internet · trình duyệt Chrome (Android) hoặc Safari (iPhone).</p>`);
+}
+async function dangNhap() {
+  const ma = $("#ma").value.trim().toUpperCase(), pin = $("#pin").value.trim();
+  if (!ma || !pin) return manDangNhap("Em nhập đủ mã và PIN nhé.");
+  try { const r = await goi("dangNhap", ma, pin); if (!r.ok) return manDangNhap(r.loi);
+    S.hv = r.hv; S.pin = pin; S.tienDo = r.tienDo; try { sessionStorage.setItem("speakup_dn", JSON.stringify({ ma, pin })); } catch (e) {}
+    if (!S.hv.muc) di("xep-muc"); else di("trang-chu");
+  } catch (e) { manDangNhap("Không kết nối được. Kiểm tra mạng rồi thử lại."); }
+}
+
+/* ----- Xếp mức đầu khoá ----- */
+const XM = { buoc: 0, vung: "", tuDanhGia: 0, soTu: 0 };
+const CAU_XM = [{ hoi: "What's your name?", vi: "Bạn tên là gì?" }, { hoi: "Where are you from?", vi: "Bạn đến từ đâu?" }, { hoi: "What do you do every day?", vi: "Hằng ngày bạn làm gì?" }];
+function manXepMuc() {
+  if (XM.buoc === 0) return ve(dau("Làm quen — bước 1/3") + `<div class="vet">${vet()}<div class="bong-thoai">Chào em! Em đến từ miền nào?<small>Polly sẽ gợi ý bài luyện âm hợp với giọng quê em.</small></div></div>
+    <div class="the-muc" style="margin-top:14px">${Object.entries(ND.vung_mien).map(([k, v]) => `<div data-act="xm-vung" data-v="${k}" class="${XM.vung === k ? "chon" : ""}">
+    <svg viewBox="0 0 48 48"><path d="M24 4c-8 0-14 6-14 14 0 10 14 26 14 26s14-16 14-26c0-8-6-14-14-14z" fill="url(#${k === "bac" ? "gLam" : k === "trung" ? "gXanhLa" : "gCam"})"/><circle cx="24" cy="18" r="5" fill="#fff"/></svg><b>${v}</b></div>`).join("")}</div>`);
+  if (XM.buoc === 1) return ve(dau("Làm quen — bước 2/3") + `<div class="vet">${vet()}<div class="bong-thoai">Em tự thấy mình nói tiếng Anh thế nào?</div></div>
+    <div class="the">${["Chưa nói được câu nào", "Nói được vài câu ngắn", "Nói được đoạn ngắn nhưng còn ngại", "Nói khá tự tin"].map((t, i) =>
+      `<button class="nut phu" style="width:100%;margin:5px 0;text-align:left" data-act="xm-tu" data-v="${i}">${"🌱🌿🌳🏆"[i] || ""} ${t}</button>`).join("")}</div>`);
+  const c = CAU_XM[XM.buoc - 2];
+  if (c) return ve(dau(`Làm quen — bước 3/3 · câu ${XM.buoc - 1}/3`) + `<div class="vet">${vet()}<div class="bong-thoai">${c.hoi}<small>${c.vi} — trả lời bằng tiếng Anh, nói gì cũng được.</small></div></div>
+    ${khuNoi()}<div id="kq"></div>`);
+}
+async function ketThucXepMuc() {
+  const muc = XM.soTu >= 15 && XM.tuDanhGia >= 2 ? "Khá" : XM.soTu >= 6 || XM.tuDanhGia >= 2 ? "Cơ bản" : "Bắt đầu";
+  S.hv.muc = muc; S.hv.vung = XM.vung;
+  await goi("capNhatHoSo", S.hv.ma, S.pin, muc, XM.vung).catch(() => {});
+  ve(dau("Làm quen xong") + `<div class="giua">${vet(true)}<h1>Mức của em: ${muc}</h1>
+  <p class="mo">${muc === "Bắt đầu" ? "Polly sẽ cho em câu mẫu đầy đủ để nhại theo." : muc === "Cơ bản" ? "Polly cho em khung câu — em tự điền phần của mình." : "Polly chỉ gợi ý từ khoá — em tự nói thành câu."}<br>Cô có thể đổi mức cho em sau.</p>
+  <button class="nut cam" data-di="trang-chu">Bắt đầu luyện ➜</button></div>`);
+}
+
+/* ----- Trang chủ ----- */
+function manTrangChu() {
+  const luot = S.tienDo.luot, chuoi = soNgayLienTuc(), soSao = luot.reduce((s, l) => s + ((+l.diem >= 80) ? 3 : (+l.diem >= 50) ? 2 : 1), 0);
+  const doi = S.tienDo.tieuDoiTuan || {}, maxDoi = Math.max(1, ...Object.values(doi));
+  const loiNhan = (S.tienDo.loiNhan || []).slice(-1)[0];
+  ve(dau("Luyện nói tiếng Anh cùng AI") + `
+  <div class="vet">${vet()}<div class="bong-thoai">Hello ${S.hv.ma}! Ready to speak? 🎙️<small>Mức: <b>${S.hv.muc || "?"}</b> · mỗi ngày 10 phút là đủ.</small></div></div>
+  <div class="hang" style="margin-top:12px"><span class="huy lua">🔥 ${chuoi} ngày liên tục</span><span class="huy">⭐ ${soSao} sao</span><span class="huy">🎙️ ${luot.length} lượt</span></div>
+  ${loiNhan ? `<div class="nhan-xet"><b>💬 Lời cô nhắn (${loiNhan.noiDung || ""})</b><p style="margin:6px 0 0">${loiNhan.nhanXet || ""}</p></div>` : ""}
+  <h2 style="margin-top:16px">Chủ đề</h2>
+  <div class="luoi">${ND.chu_de.map(c => `<div class="chude" data-di="chu-de&id=${c.id}"><div class="vach" style="background:${c.mau}"></div>${ICON[c.hinh] || ""}<b>${c.ten_en}</b><i>${c.ten_vi}</i>
+    <div class="cham4">${["nhai", "hoi-dap", "noi-cau", "1-phut"].map(b => `<span class="${daXong(c.id, b) ? "x" : ""}"></span>`).join("")}</div></div>`).join("")}
+    <div class="chude" data-di="luyen-am" style="grid-column:1/-1;min-height:auto;display:flex;align-items:center;gap:10px">${ICON.am.replace('class="icon"', 'class="icon" style="margin:0"')}
+    <div style="text-align:left"><b style="text-align:left">🎯 Luyện âm theo vùng miền</b><i style="text-align:left">n/l · r · v · th · âm cuối · đuôi -s, -ed</i></div></div></div>
+  <div class="the tien-do-doi"><b>🏅 Thi đua tiểu đội — 7 ngày qua</b><p class="mo" style="margin:4px 0 6px">Tổng lượt luyện của cả tiểu đội (không xếp hạng từng người).</p>
+  ${Object.keys(doi).sort().map(k => `<div class="dong"><b>${k}${k === S.hv.tieuDoi ? " ★" : ""}</b><div class="thanh"><i style="width:${100 * doi[k] / maxDoi}%"></i></div><span>${doi[k]}</span></div>`).join("") || `<p class="mo">Chưa có lượt nào tuần này.</p>`}</div>
+  <button class="nut phu" style="width:100%" data-act="dang-xuat">Đăng xuất</button>`);
+}
+
+/* ----- Một chủ đề: 4 bậc ----- */
+function manChuDe(p) {
+  const c = cd(p.id); if (!c) return di("trang-chu");
+  const B = [["nhai", "🦜", "Nghe – nhại", `${c.nhai.length} câu · sửa phát âm, trọng âm, ngữ điệu`, `nhai&cd=${c.id}&i=0`],
+    ["hoi-dap", "💬", "Hỏi – đáp", `${c.hoi_dap.length} câu hỏi · gợi ý theo mức của em`, `hoi-dap&cd=${c.id}&i=0`],
+    ["noi-cau", "🔗", "Nối câu", "dùng từ nối thành đoạn ngắn", `noi-cau&cd=${c.id}`],
+    ["1-phut", "⏱️", "Nói 1 phút", "nói thành chủ đề hoàn chỉnh · gửi cô nghe", `noi-1-phut&cd=${c.id}`]];
+  ve(dau(c.ten_vi, "trang-chu") + `<div class="the giua" style="border-color:${c.mau}">${ICON[c.hinh].replace('class="icon"', 'class="icon" style="width:90px;height:90px"')}<h1>${c.ten_en}</h1><p class="mo" style="margin:0">${c.ten_vi} · đi lần lượt 4 bậc</p></div>
+  <div class="duong">${B.map((b, i) => `<div class="buoc ${daXong(c.id, b[0]) ? "xong" : ""}" data-di="${b[4]}"><div class="so">${daXong(c.id, b[0]) ? "✓" : i + 1}</div><div class="bi">${b[1]}</div><div><b>${b[2]}</b><span>${b[3]}</span></div></div>`).join("")}</div>`);
+}
+
+/* ----- Khu nói (nút micro + sóng) ----- */
+function khuNoi(chu) {
+  return `<div class="the giua"><canvas class="song" id="song"></canvas>
+  <button class="mic" id="mic" data-act="noi" aria-label="Bấm để nói">${MIC}</button>
+  <div id="trang-thai" class="mo">${chu || "Bấm micro rồi nói · bấm lần nữa khi nói xong"}</div>
+  <div id="dang-nghe" style="min-height:24px;font-weight:700;color:#ffe7a8"></div></div>`;
+}
+let NOI = null, MUC_LS = [];
+function veSong() {
+  const cv = $("#song"); if (!cv) return; const r = cv.getBoundingClientRect(), dpr = devicePixelRatio || 1; cv.width = r.width * dpr; cv.height = 70 * dpr;
+  const g = cv.getContext("2d"), W = cv.width, H = cv.height, n = 48; g.clearRect(0, 0, W, H);
+  for (let i = 0; i < n; i++) { const v = MUC_LS[MUC_LS.length - n + i] || 0.03, h = Math.max(4 * dpr, v * H * 0.9), x = i * W / n;
+    const gr = g.createLinearGradient(0, H / 2 - h / 2, 0, H / 2 + h / 2); gr.addColorStop(0, "#ffb347"); gr.addColorStop(1, "#ff4d6d");
+    g.fillStyle = gr; g.beginPath(); g.roundRect ? g.roundRect(x + 2, H / 2 - h / 2, W / n - 4, h, 3 * dpr) : g.rect(x + 2, H / 2 - h / 2, W / n - 4, h); g.fill(); }
+}
+async function bamNoi(cauHinh) {
+  const nut = $("#mic");
+  if (NOI) { const n = NOI; NOI = null; nut.classList.remove("dang"); nut.innerHTML = MIC; $("#trang-thai").textContent = "Polly đang nghe lại…";
+    clearTimeout(n.hen); const kq = await n.dk.dung(); return cauHinh.xong(kq); }
+  try {
+    MUC_LS = []; const dk = await batDauNoi({ lienTuc: cauHinh.lienTuc, onMuc: v => { MUC_LS.push(v); veSong(); cauHinh.onMuc && cauHinh.onMuc(); }, onChu: t => { const d = $("#dang-nghe"); if (d) d.textContent = t; cauHinh.onChu && cauHinh.onChu(t); } });
+    NOI = { dk }; nut.classList.add("dang"); nut.innerHTML = DUNG_SVG; $("#trang-thai").textContent = "Đang nghe… nói xong bấm ■";
+    NOI.hen = setTimeout(() => { if (NOI) bamNoi(cauHinh); }, (cauHinh.toiDa || 15) * 1000);
+    cauHinh.batDau && cauHinh.batDau();
+  } catch (e) { baoNhanh(e.message); $("#trang-thai").textContent = e.message; }
+}
+async function guiLuot(l, kq) {
+  l.muc = S.hv.muc; l.giay = kq ? kq.giay : 0; l.soTu = kq ? chuanHoa(kq.chu).length : 0; l.nghe = kq ? kq.chu : "";
+  l.caoDo = kq && kq.caoDo ? kq.caoDo.filter((_, i, a) => i % Math.max(1, Math.ceil(a.length / 120)) === 0).map(v => v === null ? "x" : Math.round(v * 10) / 10) : [];
+  const b64 = kq ? await blobSangB64(kq.blob) : "";
+  try { const r = await goi("luuLuot", S.hv.ma, S.pin, l, b64, kq ? kq.mime : ""); if (r && r.tienDo) S.tienDo = r.tienDo; return true; }
+  catch (e) { baoNhanh("Chưa gửi được lượt này (mạng yếu). Em thử lại sau nhé."); return false; }
+}
+function phaoGiay() {
+  if (S.chup) return; const cv = $("#phao"), g = cv.getContext("2d"); cv.width = innerWidth; cv.height = innerHeight;
+  const ht = Array.from({ length: 90 }, () => ({ x: innerWidth / 2, y: innerHeight / 3, vx: (Math.random() - .5) * 12, vy: -Math.random() * 10 - 3, c: ["#ffd166", "#2ecc71", "#4f8cff", "#ff6b6b", "#b36bff"][Math.floor(Math.random() * 5)], r: Math.random() * 6 + 3 }));
+  let k = 0; (function b() { g.clearRect(0, 0, cv.width, cv.height); ht.forEach(h => { h.x += h.vx; h.y += h.vy; h.vy += .35; g.fillStyle = h.c; g.fillRect(h.x, h.y, h.r, h.r * .6); }); if (++k < 80) requestAnimationFrame(b); else g.clearRect(0, 0, cv.width, cv.height); })();
+}
+
+/* ----- Bậc 1: Nghe – nhại ----- */
+function trongAm(ds) {
+  return ds.length ? `<div class="am-tiet">${ds.map(w => `<span class="tu-ta">${w.split("-").map(a => `<span class="at ${a === a.toUpperCase() && /[A-Z]/.test(a) ? "nhan" : ""}">${a.toLowerCase()}</span>`).join("")}</span>`).join("")}</div>
+  <p class="mo giua" style="margin:2px 0">Âm tiết <b style="color:#ff9f43">màu cam</b> là âm nhấn (trọng âm) — nói to, dài, cao hơn.</p>` : "";
+}
+function manNhai(p) {
+  const c = cd(p.cd), i = +p.i || 0, cau = c.nhai[i]; if (!cau) return di("chu-de&id=" + c.id);
+  layAm([cau.am]);
+  ve(dau(`${c.ten_en} · Nghe – nhại ${i + 1}/${c.nhai.length}`, "chu-de&id=" + c.id) + `
+  <div class="the"><div class="cau-lon">${cau.en}</div><div class="dich">${cau.vi}</div>${trongAm(cau.trong_am)}
+  <p class="giua" style="margin:6px 0">Ngữ điệu cuối câu: <b style="font-size:20px">${cau.ngu_dieu === "len" ? "↗ đi lên" : "↘ đi xuống"}</b></p>
+  <div class="hang"><button class="nut" data-act="phat" data-am="${cau.am}">🔊 Nghe mẫu</button><button class="nut phu" data-act="phat-cham" data-am="${cau.am}">🐢 Nghe chậm</button></div></div>
+  ${khuNoi("Nghe mẫu 1–2 lần, rồi bấm micro và nói lại")}<div id="kq"></div>`);
+  if (p.mau) ketQuaNhai(c, i, kqThu(cau.en, p.mau));
+}
+async function ketQuaNhai(c, i, kq) {
+  const cau = c.nhai[i], ch = chamCau(cau.en, kq);
+  const mauCd = await caoDoMau(cau.am), hHv = huongCuoi(kq.caoDo || []), muonLen = cau.ngu_dieu === "len";
+  let nd = ""; if (hHv !== 0 && (muonLen ? hHv < 0 : hHv > 0)) nd = muonLen ? "Câu hỏi Yes/No: cuối câu giọng em đang đi xuống ↘, cần đi lên ↗." : "Cuối câu giọng em đang đi lên ↗, câu này cần đi xuống ↘.";
+  if (nd) ch.loi.push({ ma: "ngu-dieu" });
+  const diem = Math.max(0, ch.diem - (nd ? 10 : 0));
+  ting(diem >= 80); if (diem >= 80) phaoGiay(); else $("#kq") && $("#kq").classList.add("rung");
+  $("#kq").innerHTML = `<div class="the"><div class="hang" style="flex-wrap:nowrap">${vongDiem(diem)}<div><b style="font-size:18px">${sao(diem)} ${diem >= 80 ? "Tuyệt vời!" : diem >= 50 ? "Khá rồi, thử lại nhé!" : "Nghe mẫu chậm rồi nói lại nhé!"}</b>
+  <div class="mo">Điểm gợi ý của máy · ${kq.coSR ? "máy nghe: «" + (ch.nghe || "…") + "»" : "máy này chưa nhận dạng được giọng — cô sẽ nghe ghi âm"}</div></div></div>
+  <div style="margin:10px 0">${hienTu(ch.tu)}</div>
+  <b>📈 Ngữ điệu của em so với mẫu</b><canvas class="cao-do" id="cv-cd"></canvas>
+  <div class="chu-thich"><span><i style="background:#7fb2ff"></i>giọng mẫu</span><span><i style="background:#ff9f43"></i>giọng em</span></div>
+  ${hienLoi(ch.loi.filter(l => l.ma !== "ngu-dieu"), nd)}
+  <div class="hang" style="margin-top:8px"><button class="nut phu" data-act="noi-lai">🔁 Nói lại</button><button class="nut xanh" data-di="${i + 1 < c.nhai.length ? `nhai&cd=${c.id}&i=${i + 1}` : `chu-de&id=${c.id}`}">${i + 1 < c.nhai.length ? "Câu tiếp ➜" : "Xong bậc 1 ✓"}</button></div></div>`;
+  veCaoDo($("#cv-cd"), mauCd, kq.caoDo);
+  if (!kq.thu) guiLuot({ cd: c.id, bac: "nhai", i, cau: cau.en, diem, loi: ch.loi.map(l => l.ma) }, kq);
+}
+
+/* ----- Bậc 2: Hỏi – đáp ----- */
+function manHoiDap(p) {
+  const c = cd(p.cd), i = +p.i || 0, h = c.hoi_dap[i]; if (!h) return di("chu-de&id=" + c.id);
+  layAm([h.am_hoi, h.am_mau]); const muc = S.hv.muc || "Cơ bản";
+  const goiY = muc === "Bắt đầu" ? `<div class="goi-y"><small>Câu mẫu (mức Bắt đầu) — nghe rồi nói theo</small>${h.mau} <button class="nut nho phu" data-act="phat" data-am="${h.am_mau}">🔊</button></div>`
+    : muc === "Cơ bản" ? `<div class="goi-y"><small>Khung câu (mức Cơ bản) — điền thông tin của em</small>${h.khung}</div>`
+    : `<div class="goi-y"><small>Từ khoá (mức Khá) — tự nói thành câu</small>${h.tu_khoa.map(t => `<span class="chip">${t}</span>`).join("")}</div>`;
+  ve(dau(`${c.ten_en} · Hỏi – đáp ${i + 1}/${c.hoi_dap.length}`, "chu-de&id=" + c.id) + `
+  <div class="vet">${vet(true)}<div class="bong-thoai">${h.hoi} <button class="nut nho" data-act="phat" data-am="${h.am_hoi}">🔊</button><small>${h.vi}</small></div></div>
+  ${goiY}${khuNoi("Bấm micro và trả lời câu hỏi của Polly")}<div id="kq"></div>`);
+  if (!S.chup) setTimeout(() => phat(h.am_hoi), 400);
+  if (p.mau) ketQuaHoiDap(c, i, kqThu(h.mau.replace("Minh", "Nam"), p.mau));
+}
+function ketQuaHoiDap(c, i, kq) {
+  const h = c.hoi_dap[i], muc = S.hv.muc || "Cơ bản", tu = chuanHoa(kq.chu);
+  const canCo = h.can_co.map(w => chuanHoa(w)[0]).filter(Boolean), thieu = canCo.filter(w => !tu.includes(w));
+  let diem, ch = null;
+  if (muc === "Bắt đầu") { ch = chamCau(h.mau, kq); diem = ch.diem; }
+  else { diem = Math.min(100, (thieu.length ? 40 : 70) + Math.min(30, tu.length * 5)); if (tu.length < 3) diem = Math.min(diem, 40); }
+  ting(diem >= 70); if (diem >= 80) phaoGiay();
+  $("#kq").innerHTML = `<div class="the"><div class="hang" style="flex-wrap:nowrap">${vongDiem(diem)}<div><b style="font-size:18px">${sao(diem)} ${diem >= 70 ? "Trả lời tốt!" : "Thử lại nhé!"}</b><div class="mo">Máy nghe: «${kq.chu || "…"}»</div></div></div>
+  ${ch ? `<div style="margin:10px 0">${hienTu(ch.tu)}</div>${hienLoi(ch.loi)}` :
+    (thieu.length ? `<div class="loi"><b>Thiếu từ quan trọng</b>Câu trả lời nên có: ${thieu.map(w => `«${w}»`).join(", ")}<br><span class="mo">💡 Dùng khung: ${h.khung}</span></div>`
+      : tu.length < 3 ? `<div class="loi"><b>Trả lời quá ngắn</b><span class="mo">💡 Nói thành câu đầy đủ, VD: ${h.mau}</span></div>` : `<div class="loi tot"><b>Câu trả lời đủ ý 👍</b>Nghe câu mẫu để so cách nói tự nhiên.</div>`)}
+  <div class="goi-y"><small>Câu mẫu</small>${h.mau} <button class="nut nho phu" data-act="phat" data-am="${h.am_mau}">🔊</button></div>
+  <div class="hang"><button class="nut phu" data-act="noi-lai">🔁 Nói lại</button><button class="nut xanh" data-di="${i + 1 < c.hoi_dap.length ? `hoi-dap&cd=${c.id}&i=${i + 1}` : `chu-de&id=${c.id}`}">${i + 1 < c.hoi_dap.length ? "Câu tiếp ➜" : "Xong bậc 2 ✓"}</button></div></div>`;
+  if (!kq.thu) guiLuot({ cd: c.id, bac: "hoi-dap", i, cau: h.hoi, diem, loi: ch ? ch.loi.map(l => l.ma) : (thieu.length ? ["bo-tu"] : []) }, kq);
+}
+
+/* ----- Bậc 3: Nối câu ----- */
+function manNoiCau(p) {
+  const c = cd(p.cd), n = c.noi_cau; layAm([n.am]);
+  ve(dau(`${c.ten_en} · Nối câu`, "chu-de&id=" + c.id) + `
+  <div class="vet">${vet()}<div class="bong-thoai">Nối các câu thành một đoạn ngắn!<small>Nói 3–5 câu theo gợi ý, dùng ít nhất 2 từ nối.</small></div></div>
+  <div class="the"><b>🧩 Gợi ý ý</b><div style="margin:6px 0">${n.goi_y.map((g, k) => `<div class="goi-y" style="margin:6px 0;font-size:15px"><small>Ý ${k + 1}</small>${g}</div>`).join("")}</div>
+  <b>🔗 Từ nối — sáng lên khi em nói</b><div id="tu-noi">${n.tu_noi.map(t => `<span class="chip" data-tn="${t}">${t}</span>`).join("")}</div>
+  ${S.hv.muc === "Bắt đầu" ? `<div class="goi-y"><small>Đoạn mẫu (mức Bắt đầu)</small>${n.mau}</div>` : ""}
+  <button class="nut nho phu" data-act="phat" data-am="${n.am}" style="margin-top:6px">🔊 Nghe đoạn mẫu</button></div>
+  ${khuNoi("Bấm micro, nói cả đoạn (tối đa 45 giây)")}<div id="kq"></div>`);
+  if (p.mau) { sangTuNoi("first I get up then I have breakfast because"); ketQuaNoiCau(c, kqThu(n.mau, p.mau)); }
+}
+function sangTuNoi(t) { const s = " " + chuanHoa(t).join(" ") + " "; document.querySelectorAll("[data-tn]").forEach(e => e.classList.toggle("sang", s.includes(" " + chuanHoa(e.dataset.tn).join(" ") + " "))); }
+function ketQuaNoiCau(c, kq) {
+  const n = c.noi_cau, s = " " + chuanHoa(kq.chu).join(" ") + " ", soTu = chuanHoa(kq.chu).length;
+  const dung = n.tu_noi.filter(t => s.includes(" " + chuanHoa(t).join(" ") + " "));
+  const diem = Math.min(100, Math.round(dung.length * 25 + Math.min(50, soTu * 1.5)));
+  sangTuNoi(kq.chu); ting(diem >= 70); if (diem >= 80) phaoGiay();
+  $("#kq").innerHTML = `<div class="the"><div class="hang" style="flex-wrap:nowrap">${vongDiem(diem)}<div><b style="font-size:18px">${sao(diem)} ${dung.length >= 2 ? "Đoạn văn mạch lạc!" : "Thêm từ nối nhé!"}</b>
+  <div class="mo">${soTu} từ · ${kq.giay}s · từ nối: ${dung.join(", ") || "chưa có"}</div></div></div>
+  <div class="the" style="margin:8px 0;font-size:16px;line-height:1.6">${kq.chu ? kq.chu.replace(new RegExp("\\b(" + n.tu_noi.join("|") + ")\\b", "gi"), m => `<b style="color:#2ecc71">${m}</b>`) : "…"}</div>
+  ${dung.length < 2 ? `<div class="loi"><b>Cần ít nhất 2 từ nối</b>Thử thêm: ${n.tu_noi.filter(t => !dung.includes(t)).join(", ")}<br><span class="mo">💡 VD: ${n.mau.split(". ").slice(0, 2).join(". ")}.</span></div>` : `<div class="loi tot"><b>Tốt lắm!</b>Em đã nối câu bằng ${dung.join(", ")}.</div>`}
+  <div class="hang"><button class="nut phu" data-act="noi-lai">🔁 Nói lại</button><button class="nut xanh" data-di="noi-1-phut&cd=${c.id}">Lên bậc 4 ➜</button></div></div>`;
+  if (!kq.thu) guiLuot({ cd: c.id, bac: "noi-cau", i: 0, cau: n.mau, diem, loi: dung.length < 2 ? ["bo-tu"] : [] }, kq);
+}
+
+/* ----- Bậc 4: Nói 1 phút ----- */
+function dongHo(con, tong) {
+  const c = 2 * Math.PI * 64, ti = con / tong;
+  return `<svg class="dong-ho" viewBox="0 0 150 150"><circle cx="75" cy="75" r="64" stroke="rgba(255,255,255,.12)" stroke-width="12" fill="none"/>
+  <circle cx="75" cy="75" r="64" stroke="url(#gCam)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="${c * ti} ${c}" transform="rotate(-90 75 75)"/>
+  <text x="75" y="84" text-anchor="middle" font-size="34" font-weight="900" fill="#fff" font-family="Segoe UI,Arial">${Math.ceil(con)}s</text></svg>`;
+}
+function manMotPhut(p) {
+  const c = cd(p.cd), m = c.noi_1_phut;
+  ve(dau(`${c.ten_en} · Nói 1 phút`, "chu-de&id=" + c.id) + `
+  <div class="vet">${vet(true)}<div class="bong-thoai">${m.de}<small>Nói liền 1 phút theo dàn ý. Bài nói được gửi cho cô nghe và nhận xét.</small></div></div>
+  <div class="the"><div id="dh">${dongHo(60, 60)}</div>
+  <b>🗺️ Dàn ý</b><div>${m.dan_y.map((d, k) => `<span class="chip">${k + 1}. ${d}</span>`).join("")}</div>
+  <b style="display:block;margin-top:8px">💎 Từ vựng — sáng lên khi em dùng</b><div>${m.tu_vung.map(t => `<span class="chip" data-tn="${t}">${t}</span>`).join("")}</div></div>
+  ${khuNoi("Bấm micro để bắt đầu 60 giây")}<div id="kq"></div>`);
+  if (p.mau) { sangTuNoi(c.noi_cau.mau); $("#dh").innerHTML = dongHo(18, 60); ketQuaMotPhut(c, kqThu(c.noi_cau.mau + " I want to be a good soldier.", p.mau, 52)); }
+}
+function ketQuaMotPhut(c, kq) {
+  const m = c.noi_1_phut, s = " " + chuanHoa(kq.chu).join(" ") + " ", soTu = chuanHoa(kq.chu).length, tpm = kq.giay ? Math.round(soTu * 60 / kq.giay) : 0;
+  const tv = m.tu_vung.filter(t => s.includes(" " + chuanHoa(t).join(" ") + " ")), tn = ["and", "but", "because", "so", "then", "first", "after that", "finally", "also"].filter(t => s.includes(" " + chuanHoa(t).join(" ") + " "));
+  const diem = Math.min(100, Math.round(Math.min(40, soTu * 0.8) + tv.length / m.tu_vung.length * 35 + Math.min(25, tn.length * 8)));
+  sangTuNoi(kq.chu); ting(true); phaoGiay();
+  $("#kq").innerHTML = `<div class="the"><div class="hang" style="flex-wrap:nowrap">${vongDiem(diem)}<div><b style="font-size:18px">🎉 Đã gửi bài nói cho cô!</b><div class="mo">Điểm gợi ý của máy — cô sẽ nghe và nhận xét.</div></div></div>
+  <div class="hang" style="justify-content:space-around;margin:10px 0;text-align:center">
+   <div><div class="so-to">${soTu}</div><span class="mo">từ</span></div><div><div class="so-to">${tpm}</div><span class="mo">từ/phút</span></div>
+   <div><div class="so-to">${tv.length}/${m.tu_vung.length}</div><span class="mo">từ vựng</span></div><div><div class="so-to">${tn.length}</div><span class="mo">từ nối</span></div></div>
+  ${tpm && tpm < 60 ? `<div class="loi"><b>Nói còn chậm (${tpm} từ/phút)</b><span class="mo">💡 Luyện lại bậc Nối câu cho trôi chảy, mục tiêu 70–100 từ/phút.</span></div>` : ""}
+  ${tv.length < m.tu_vung.length / 2 ? `<div class="loi"><b>Dùng thêm từ vựng của chủ đề</b><span class="mo">💡 Chưa dùng: ${m.tu_vung.filter(t => !tv.includes(t)).join(", ")}</span></div>` : `<div class="loi tot"><b>Dùng từ vựng tốt!</b>${tv.join(", ")}</div>`}
+  <div class="hang"><button class="nut phu" data-act="noi-lai">🔁 Nói lại</button><button class="nut xanh" data-di="trang-chu">Về trang chủ</button></div></div>`;
+  if (!kq.thu) guiLuot({ cd: c.id, bac: "1-phut", i: 0, cau: m.de, diem, loi: [] }, kq);
+}
+
+/* ----- Luyện âm theo vùng miền ----- */
+function manLuyenAm() {
+  const v = S.hv.vung;
+  const ds = ND.cap_am.slice().sort((a, b) => (b.vung.includes(v) && b.vung.length < 3) - (a.vung.includes(v) && a.vung.length < 3));
+  ve(dau("Luyện âm theo vùng miền", "trang-chu") + `<div class="vet">${vet()}<div class="bong-thoai">Luyện cặp âm dễ nhầm!<small>${v ? "Bài có ★ là lỗi hay gặp ở " + ND.vung_mien[v] + " — tham khảo, em vẫn luyện được mọi bài." : "Chọn một cặp âm để luyện."}</small></div></div>
+  <div class="luoi" style="margin-top:12px">${ds.map(a => `<div class="chude" style="min-height:auto" data-di="cap-am&id=${a.id}&i=0">${a.vung.includes(v) && a.vung.length < 3 ? `<div class="vach" style="background:#ffd166"></div>` : ""}
+   <b style="font-size:20px">${a.ten}${a.vung.includes(v) && a.vung.length < 3 ? " ★" : ""}</b><i>${a.cap[0].join(" · ")}</i><i style="margin-top:4px">${a.giai_thich}</i></div>`).join("")}</div>`);
+}
+function manCapAm(p) {
+  const a = ND.cap_am.find(x => x.id === p.id), i = +p.i || 0; if (!a || !a.cap[i]) return di("luyen-am");
+  const [w1, w2] = a.cap[i], [m1, m2] = a.am[i], mt = p.mt !== undefined ? +p.mt : Math.random() < .5 ? 0 : 1;
+  layAm([m1, m2]);
+  ve(dau(`${a.ten} · cặp ${i + 1}/${a.cap.length}`, "luyen-am") + `
+  <div class="the"><p class="mo" style="margin-top:0">${a.giai_thich}</p><div class="cap">
+   <div class="o-cap ${mt === 0 ? "muc-tieu" : ""}" data-act="phat" data-am="${m1}">${w1}<small>🔊 bấm để nghe</small></div>
+   <div class="o-cap ${mt === 1 ? "muc-tieu" : ""}" data-act="phat" data-am="${m2}">${w2}<small>🔊 bấm để nghe</small></div></div>
+   <div class="goi-y"><small>Mẹo đặt lưỡi, môi</small>${a.meo}</div></div>
+  <div class="bong-thoai" style="margin:8px 0 0 10px">Thử thách: hãy nói từ <span style="color:#e67e00">«${[w1, w2][mt]}»</span></div>
+  ${khuNoi("Bấm micro và nói đúng một từ")}<div id="kq"></div>`);
+  CAP = { a, i, mt, w: [w1, w2] };
+  if (p.mau) ketQuaCapAm(kqThu(p.mau === "2" ? [w1, w2][1 - mt] : [w1, w2][mt], p.mau));
+}
+let CAP = null;
+function ketQuaCapAm(kq) {
+  const { a, i, mt, w } = CAP, tu = chuanHoa(kq.chu), dich = chuanHoa(w[mt])[0], khac = chuanHoa(w[1 - mt])[0];
+  const pa = [kq.chu].concat(...(kq.phuongAn || [])).map(x => chuanHoa(x));
+  const dung = pa.some(x => x.includes(dich)), nham = !dung && tu.includes(khac);
+  const o = document.querySelectorAll(".o-cap"); o[mt].classList.add(dung ? "dung" : "sai"); if (nham) o[1 - mt].classList.add("sai");
+  ting(dung); if (dung) phaoGiay();
+  $("#kq").innerHTML = `<div class="the">${dung ? `<div class="loi tot"><b>Chính xác! 🎯</b>Máy nghe đúng «${w[mt]}».</div>`
+    : nham ? `<div class="loi"><b>Máy nghe thành «${w[1 - mt]}»</b>Hai âm này em đang nói giống nhau.<br><span class="mo">💡 ${a.meo}</span></div>`
+    : `<div class="loi"><b>Máy nghe: «${kq.chu || "…"}»</b><span class="mo">💡 Nói to, rõ một từ. ${a.meo}</span></div>`}
+  <div class="hang"><button class="nut phu" data-act="noi-lai">🔁 Thử lại</button><button class="nut xanh" data-di="${i + 1 < a.cap.length ? `cap-am&id=${a.id}&i=${i + 1}` : "luyen-am"}">${i + 1 < a.cap.length ? "Cặp tiếp ➜" : "Xong ✓"}</button></div></div>`;
+  if (!kq.thu) guiLuot({ cd: "luyen-am", bac: "cap-am:" + a.id, i, cau: w[mt], diem: dung ? 100 : 0, loi: dung ? [] : [a.id] }, kq);
+}
+
+/* ----- Kết quả thử (chế độ chụp, có nhãn DỮ LIỆU THỬ) ----- */
+function kqThu(chu, kieu, giay) {
+  let c = chu;
+  if (kieu === "2") c = chu.replace(/\bthree\b/gi, "tree").replace(/\bparents\b/gi, "parent").replace(/\bstayed\b/gi, "stay").replace(/\bsoldier\b/gi, "solder").replace(/\bstudy\b/gi, "stuff");
+  const n = 70, caoDo = Array.from({ length: n }, (_, k) => (k % 17 === 16) ? null : Math.sin(k / 9) * 2.5 + (k > 54 ? (kieu === "2" ? 2 : -1) * (k - 54) / 4 : 0));
+  return { chu: c, phuongAn: [], caoDo, giay: giay || 3.2, coSR: true, thu: true };
+}
+
+/* ===================== ĐIỀU HƯỚNG ===================== */
+function docHash(h) { const [man, ...ts] = String(h || "").replace(/^#/, "").split("&"); const p = {}; ts.forEach(t => { const [k, v] = t.split("="); p[k] = decodeURIComponent(v || ""); }); return { man, p }; }
+function di(h) { if (location.hash === "#" + h) hienThi(); else location.hash = h; }
+let CHO_MAN = null;
+function hienThi() {
+  const { man, p } = docHash(location.hash);
+  NOI = null; S.chup = S.chup || !!p.mau;
+  if (!S.hv && man !== "dang-nhap") return manDangNhap();
+  ({ "dang-nhap": manDangNhap, "xep-muc": () => { XM.buoc = +(p.buoc || XM.buoc); manXepMuc(); }, "trang-chu": manTrangChu, "chu-de": manChuDe, "nhai": manNhai, "hoi-dap": manHoiDap,
+    "noi-cau": manNoiCau, "noi-1-phut": manMotPhut, "luyen-am": manLuyenAm, "cap-am": manCapAm }[man] || manTrangChu)(p);
+  CHO_MAN = { man, p };
+}
+document.addEventListener("click", async e => {
+  const t = e.target.closest("[data-di],[data-act]"); if (!t) return;
+  if (t.dataset.di) return di(t.dataset.di);
+  const a = t.dataset.act, { man, p } = CHO_MAN || {};
+  if (a === "mo-cua-so") return moCuaSo();
+  if (a === "dang-nhap") return dangNhap();
+  if (a === "dang-xuat") { S.hv = null; try { sessionStorage.removeItem("speakup_dn"); } catch (er) {} return di("dang-nhap"); }
+  if (a === "phat") return phat(t.dataset.am, 1);
+  if (a === "phat-cham") return phat(t.dataset.am, 0.7);
+  if (a === "noi-lai") { $("#kq").innerHTML = ""; return bamNoi(cauHinhNoi(man, p)); }
+  if (a === "xm-vung") { XM.vung = t.dataset.v; XM.buoc = 1; return manXepMuc(); }
+  if (a === "xm-tu") { XM.tuDanhGia = +t.dataset.v; XM.buoc = 2; return manXepMuc(); }
+  if (a === "noi") return bamNoi(cauHinhNoi(man, p));
+});
+document.addEventListener("keydown", e => { if (e.key === "Enter" && $("#pin") && document.activeElement && document.activeElement.tagName === "INPUT") dangNhap(); });
+function cauHinhNoi(man, p) {
+  if (man === "xep-muc") return { toiDa: 20, xong: kq => { XM.soTu += chuanHoa(kq.chu).length; XM.buoc++; if (XM.buoc > 4) ketThucXepMuc(); else manXepMuc(); } };
+  if (man === "nhai") return { toiDa: 12, xong: kq => ketQuaNhai(cd(p.cd), +p.i || 0, kq) };
+  if (man === "hoi-dap") return { toiDa: 15, xong: kq => ketQuaHoiDap(cd(p.cd), +p.i || 0, kq) };
+  if (man === "noi-cau") return { toiDa: 45, lienTuc: true, onChu: sangTuNoi, xong: kq => ketQuaNoiCau(cd(p.cd), kq) };
+  if (man === "noi-1-phut") { let bd = 0, h = null; return { toiDa: 60, lienTuc: true, onChu: sangTuNoi,
+    batDau: () => { bd = Date.now(); h = setInterval(() => { const con = Math.max(0, 60 - (Date.now() - bd) / 1000); const d = $("#dh"); if (d) d.innerHTML = dongHo(con, 60); if (!con) clearInterval(h); }, 250); },
+    xong: kq => { clearInterval(h); ketQuaMotPhut(cd(p.cd), kq); } }; }
+  if (man === "cap-am") return { toiDa: 6, xong: kq => ketQuaCapAm(kq) };
+  return { xong: () => {} };
+}
+window.addEventListener("hashchange", hienThi);
+(async function batDau() {
+  if (!ND) { document.body.innerHTML = "<p style='padding:20px'>Thiếu nội dung bài luyện.</p>"; return; }
+  if (CO_MAY_CHU && !MAY_CHU && KHUNG_CHAN_MIC) return manMoCuaSo();
+  S.chup = /(^|&)mau=/.test(location.hash) || /chup/.test(location.search);
+  if (S.chup) document.documentElement.style.scrollBehavior = "auto";
+  let dn = null; try { dn = JSON.parse(sessionStorage.getItem("speakup_dn") || "null"); } catch (e) {}
+  if (DEMO && !dn) dn = { ma: "HV07", pin: "1234" };
+  if (dn) { try { const r = await goi("dangNhap", dn.ma, dn.pin); if (r.ok) { S.hv = r.hv; S.pin = dn.pin; S.tienDo = r.tienDo; } } catch (e) {} }
+  if (/^#?dang-nhap/.test(location.hash)) S.hv = null;
+  hienThi();
+})();
+</script>
+</body>
+</html>
